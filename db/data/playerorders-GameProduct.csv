@@ -1,0 +1,9 @@
+ID;name;description;type;price;active;stockRelevant;stockQuantity
+11111111-1111-4111-8111-111111111111;1000 Coins;Small in-game currency pack;CURRENCY_PACK;4.99;true;false;0
+22222222-2222-4222-8222-222222222222;5000 Coins;Large in-game currency pack;CURRENCY_PACK;19.99;true;false;0
+33333333-3333-4333-8333-333333333333;VIP Monthly;Monthly VIP subscription;SUBSCRIPTION;9.99;true;false;0
+44444444-4444-4444-8444-444444444444;Season Battle Pass;Access to premium seasonal rewards;BATTLE_PASS;14.99;true;false;0
+55555555-5555-4555-8555-555555555555;Cyber Knight Skin;Rare cosmetic character skin;COSMETIC;7.99;true;false;0
+66666666-6666-4666-8666-666666666666;Double XP Booster;Double experience gain for seven days;BOOSTER;3.99;true;false;0
+77777777-7777-4777-8777-777777777777;Founder Avatar Frame;Limited profile customization item;COSMETIC;5.99;false;false;0
+88888888-8888-4888-8888-888888888888;Game Logo T-Shirt;Physical branded merchandise;MERCHANDISE;24.99;true;true;50

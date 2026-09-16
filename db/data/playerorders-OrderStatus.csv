@@ -1,0 +1,7 @@
+code;description;criticality
+NEW;New;0
+SUBMITTED;Submitted;2
+PAID;Paid;3
+FULFILLED;Fulfilled;3
+CANCELLED;Cancelled;1
+PAYMENT_FAILED;Payment failed;1

@@ -1,0 +1,5 @@
+ID;displayName;email;playerId;segment;totalSpent
+cccccccc-1111-4111-8111-111111111111;Daniel;daniel@example.com;bbbbbbbb-1111-1111-1111-111111111111;VIP;0
+cccccccc-2222-4222-8222-222222222222;Alex;alex@example.com;bbbbbbbb-2222-2222-2222-222222222222;REGULAR;0
+cccccccc-3333-4333-8333-333333333333;Maria;maria@example.com;bbbbbbbb-3333-3333-3333-333333333333;RETURNING;0
+cccccccc-4444-4444-8444-444444444444;Igor;igor@example.com;bbbbbbbb-4444-4444-4444-444444444444;AT_RISK;0
