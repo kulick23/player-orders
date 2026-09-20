@@ -1,0 +1,82 @@
+{
+  "xsappname": "player-orders",
+  "tenant-mode": "dedicated",
+  "oauth2-configuration": {
+  "redirect-uris": [
+    "https://90b3d5c7trial-dev-player-orders.cfapps.us10-001.hana.ondemand.com/login/callback"
+  ]
+},
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Customer",
+      "description": "Create and manage own player orders"
+    },
+    {
+      "name": "$XSAPPNAME.SalesAdmin",
+      "description": "Manage orders, customers, products and payments"
+    },
+    {
+      "name": "$XSAPPNAME.WarehouseManager",
+      "description": "Manage stock and fulfill paid orders"
+    }
+  ],
+  "attributes": [
+    {
+      "name": "playerId",
+      "description": "Player identifier used to restrict customers to their own orders",
+      "valueType": "string",
+      "valueRequired": true
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Customer",
+      "description": "Player ordering role",
+      "scope-references": [
+        "$XSAPPNAME.Customer"
+      ],
+      "attribute-references": [
+        "playerId"
+      ]
+    },
+    {
+      "name": "SalesAdmin",
+      "description": "Sales administrator",
+      "scope-references": [
+        "$XSAPPNAME.SalesAdmin"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "WarehouseManager",
+      "description": "Warehouse manager",
+      "scope-references": [
+        "$XSAPPNAME.WarehouseManager"
+      ],
+      "attribute-references": []
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "PlayerOrders_Customer",
+      "description": "Player Orders customer",
+      "role-template-references": [
+        "$XSAPPNAME.Customer"
+      ]
+    },
+    {
+      "name": "PlayerOrders_SalesAdmin",
+      "description": "Player Orders sales administrator",
+      "role-template-references": [
+        "$XSAPPNAME.SalesAdmin"
+      ]
+    },
+    {
+      "name": "PlayerOrders_WarehouseManager",
+      "description": "Player Orders warehouse manager",
+      "role-template-references": [
+        "$XSAPPNAME.WarehouseManager"
+      ]
+    }
+  ]
+}
