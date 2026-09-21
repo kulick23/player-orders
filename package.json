@@ -1,12 +1,74 @@
 {
   "devDependencies": {
+    "@cap-js/cds-test": "^1.0.2",
     "@cap-js/cds-typer": ">=0.1",
     "@cap-js/cds-types": "^0.16.0",
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9.9.6",
     "@types/node": "^24.0.0",
+    "cds-plugin-ui5": "^0.17.0",
     "tsx": "^4",
     "typescript": "^6.0.0"
   },
   "imports": {
     "#cds-models/*": "./@cds-models/*/index.js"
+  },
+  "dependencies": {
+    "@cap-js/hana": "^2",
+    "@sap/cds": "^9.9.3",
+    "@sap/xssec": "^4"
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "scripts": {
+    "start": "cds-serve",
+    "watch-orders": "cds watch --open playerorders.orders/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "test": "CDS_TYPESCRIPT=true CDS_PLUGIN_UI5_ACTIVE=false node --import tsx --test --test-force-exit test/*.test.js"
+  },
+  "sapux": [
+    "app/orders"
+  ],
+  "cds": {
+    "requires": {
+      "auth": {
+        "[development]": {
+          "kind": "mocked",
+          "users": {
+            "customer": {
+              "password": "customer",
+              "roles": [
+                "Customer"
+              ],
+              "attr": {
+                "playerId": "bbbbbbbb-4444-4444-4444-444444444444"
+              }
+            },
+            "sales": {
+              "password": "sales",
+              "roles": [
+                "SalesAdmin"
+              ]
+            },
+            "warehouse": {
+              "password": "warehouse",
+              "roles": [
+                "WarehouseManager"
+              ]
+            },
+            "*": false
+          }
+        },
+        "[production]": {
+          "kind": "xsuaa"
+        }
+      },
+      "[production]": {
+        "auth": {
+          "kind": "xsuaa"
+        }
+      },
+      "html5-repo": true
+    }
   }
 }
