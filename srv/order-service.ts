@@ -2,7 +2,25 @@ import cds, { Request } from "@sap/cds";
 const { SELECT, UPDATE, INSERT } = cds.ql;
 export default class PlayerOrderService extends cds.ApplicationService {
   async init() {
-    const { SalesOrders, SalesOrderItems, GameProducts } = this.entities;
+    const { Configuration, SalesOrders, SalesOrderItems, GameProducts } =
+      this.entities;
+
+    this.on("READ", Configuration, (req) => {
+      const isCustomer = req.user.is("Customer");
+      const isSalesAdmin = req.user.is("SalesAdmin");
+      const isWarehouseManager = req.user.is("WarehouseManager");
+
+      return {
+        ID: "current",
+        canCreateOrder: isCustomer || isSalesAdmin,
+        canUpdateOrder: isCustomer || isSalesAdmin,
+        canDeleteOrder: isCustomer || isSalesAdmin,
+        canSubmitOrder: isCustomer || isSalesAdmin,
+        canMarkAsPaid: isSalesAdmin,
+        canFulfillOrder: isSalesAdmin || isWarehouseManager,
+        canCancelOrder: isCustomer || isSalesAdmin,
+      };
+    });
 
     const customerIDFor = async (req: Request) => {
       const rawPlayerID = req.user.attr?.playerId as

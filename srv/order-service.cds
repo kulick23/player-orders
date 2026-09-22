@@ -4,6 +4,19 @@ using {playerorders as db} from '../db/schema';
 @requires: 'authenticated-user'
 service PlayerOrderService {
 
+    @odata.singleton
+    @cds.persistence.skip
+    entity Configuration {
+        key ID              : String;
+            canCreateOrder  : Boolean;
+            canUpdateOrder  : Boolean;
+            canDeleteOrder  : Boolean;
+            canSubmitOrder  : Boolean;
+            canMarkAsPaid   : Boolean;
+            canFulfillOrder : Boolean;
+            canCancelOrder  : Boolean;
+    }
+
     @odata.draft.enabled
     @restrict: [
         { grant: 'CREATE',                         to: ['Customer', 'SalesAdmin'] },

@@ -90,6 +90,57 @@ describe("PlayerOrderService", () => {
       expect(response.data.value).to.have.length(4);
     });
 
+    it("returns customer UI capabilities", async () => {
+      const response = await GET(
+        "/orders/Configuration",
+        options(CUSTOMER),
+      );
+
+      expect(response.data).to.include({
+        canCreateOrder: true,
+        canUpdateOrder: true,
+        canDeleteOrder: true,
+        canSubmitOrder: true,
+        canMarkAsPaid: false,
+        canFulfillOrder: false,
+        canCancelOrder: true,
+      });
+    });
+
+    it("returns sales administrator UI capabilities", async () => {
+      const response = await GET(
+        "/orders/Configuration",
+        options(SALES),
+      );
+
+      expect(response.data).to.include({
+        canCreateOrder: true,
+        canUpdateOrder: true,
+        canDeleteOrder: true,
+        canSubmitOrder: true,
+        canMarkAsPaid: true,
+        canFulfillOrder: true,
+        canCancelOrder: true,
+      });
+    });
+
+    it("returns warehouse manager UI capabilities", async () => {
+      const response = await GET(
+        "/orders/Configuration",
+        options(WAREHOUSE),
+      );
+
+      expect(response.data).to.include({
+        canCreateOrder: false,
+        canUpdateOrder: false,
+        canDeleteOrder: false,
+        canSubmitOrder: false,
+        canMarkAsPaid: false,
+        canFulfillOrder: true,
+        canCancelOrder: false,
+      });
+    });
+
     it("forbids a warehouse manager from creating orders", async () => {
       const response = await POST(
         "/orders/SalesOrders",

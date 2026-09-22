@@ -1,5 +1,26 @@
 using PlayerOrderService as service from '../../srv/order-service';
 annotate service.SalesOrders with @(
+    UI.CreateHidden : {
+        $edmJson : {
+            $Not : {
+                $Path : '/PlayerOrderService.EntityContainer/Configuration/canCreateOrder'
+            }
+        }
+    },
+    UI.UpdateHidden : {
+        $edmJson : {
+            $Not : {
+                $Path : '/PlayerOrderService.EntityContainer/Configuration/canUpdateOrder'
+            }
+        }
+    },
+    UI.DeleteHidden : {
+        $edmJson : {
+            $Not : {
+                $Path : '/PlayerOrderService.EntityContainer/Configuration/canDeleteOrder'
+            }
+        }
+    },
         UI.HeaderInfo : {
         $Type : 'UI.HeaderInfoType',
         TypeName : 'Sales Order',
@@ -59,21 +80,49 @@ annotate service.SalesOrders with @(
             $Type : 'UI.DataFieldForAction',
             Action : 'PlayerOrderService.submitOrder',
             Label : 'Submit Order',
+            ![@UI.Hidden] : {
+                $edmJson : {
+                    $Not : {
+                        $Path : '/PlayerOrderService.EntityContainer/Configuration/canSubmitOrder'
+                    }
+                }
+            },
         },
         {
             $Type : 'UI.DataFieldForAction',
             Action : 'PlayerOrderService.markAsPaid',
             Label : 'Mark as Paid',
+            ![@UI.Hidden] : {
+                $edmJson : {
+                    $Not : {
+                        $Path : '/PlayerOrderService.EntityContainer/Configuration/canMarkAsPaid'
+                    }
+                }
+            },
         },
         {
             $Type : 'UI.DataFieldForAction',
             Action : 'PlayerOrderService.fulfillOrder',
             Label : 'Fulfill Order',
+            ![@UI.Hidden] : {
+                $edmJson : {
+                    $Not : {
+                        $Path : '/PlayerOrderService.EntityContainer/Configuration/canFulfillOrder'
+                    }
+                }
+            },
         },
         {
             $Type : 'UI.DataFieldForAction',
             Action : 'PlayerOrderService.cancelOrder',
             Label : 'Cancel Order',
+            ![@UI.Hidden] : {
+                $edmJson : {
+                    $Not : {
+                        $Path : '/PlayerOrderService.EntityContainer/Configuration/canCancelOrder'
+                    }
+                }
+            },
         },
     ],
      UI.Facets : [
