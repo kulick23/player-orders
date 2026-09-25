@@ -80,49 +80,21 @@ annotate service.SalesOrders with @(
             $Type : 'UI.DataFieldForAction',
             Action : 'PlayerOrderService.submitOrder',
             Label : 'Submit Order',
-            ![@UI.Hidden] : {
-                $edmJson : {
-                    $Not : {
-                        $Path : '/PlayerOrderService.EntityContainer/Configuration/canSubmitOrder'
-                    }
-                }
-            },
         },
         {
             $Type : 'UI.DataFieldForAction',
             Action : 'PlayerOrderService.markAsPaid',
             Label : 'Mark as Paid',
-            ![@UI.Hidden] : {
-                $edmJson : {
-                    $Not : {
-                        $Path : '/PlayerOrderService.EntityContainer/Configuration/canMarkAsPaid'
-                    }
-                }
-            },
         },
         {
             $Type : 'UI.DataFieldForAction',
             Action : 'PlayerOrderService.fulfillOrder',
             Label : 'Fulfill Order',
-            ![@UI.Hidden] : {
-                $edmJson : {
-                    $Not : {
-                        $Path : '/PlayerOrderService.EntityContainer/Configuration/canFulfillOrder'
-                    }
-                }
-            },
         },
         {
             $Type : 'UI.DataFieldForAction',
             Action : 'PlayerOrderService.cancelOrder',
             Label : 'Cancel Order',
-            ![@UI.Hidden] : {
-                $edmJson : {
-                    $Not : {
-                        $Path : '/PlayerOrderService.EntityContainer/Configuration/canCancelOrder'
-                    }
-                }
-            },
         },
     ],
      UI.Facets : [
