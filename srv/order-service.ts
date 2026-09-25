@@ -17,7 +17,7 @@ export default class PlayerOrderService extends cds.ApplicationService {
         canDeleteOrder: isCustomer || isSalesAdmin,
         canSubmitOrder: isCustomer || isSalesAdmin,
         canMarkAsPaid: isSalesAdmin,
-        canFulfillOrder: isSalesAdmin || isWarehouseManager,
+        canFulfillOrder: isWarehouseManager,
         canCancelOrder: isCustomer || isSalesAdmin,
       };
     });

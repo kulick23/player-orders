@@ -119,7 +119,7 @@ describe("PlayerOrderService", () => {
         canDeleteOrder: true,
         canSubmitOrder: true,
         canMarkAsPaid: true,
-        canFulfillOrder: true,
+        canFulfillOrder: false,
         canCancelOrder: true,
       });
     });
@@ -322,6 +322,16 @@ describe("PlayerOrderService", () => {
         actionPath(IGOR_ORDER_ID, "fulfillOrder"),
         {},
         options(CUSTOMER, true),
+      );
+
+      expect(response.status).to.equal(403);
+    });
+
+    it("forbids a sales administrator from fulfilling a paid order", async () => {
+      const response = await POST(
+        actionPath(DANIEL_ORDER_ID, "fulfillOrder"),
+        {},
+        options(SALES, true),
       );
 
       expect(response.status).to.equal(403);

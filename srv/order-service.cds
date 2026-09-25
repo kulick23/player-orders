@@ -22,7 +22,8 @@ service PlayerOrderService {
         { grant: 'CREATE',                         to: ['Customer', 'SalesAdmin'] },
         { grant: ['READ', 'UPDATE', 'DELETE'],     to: 'Customer', where: 'customer.playerId = $user.playerId' },
         { grant: ['submitOrder', 'cancelOrder'],   to: 'Customer', where: 'customer.playerId = $user.playerId' },
-        { grant: '*',                              to: 'SalesAdmin' },
+        { grant: ['READ', 'UPDATE', 'DELETE'],     to: 'SalesAdmin' },
+        { grant: ['submitOrder', 'markAsPaid', 'cancelOrder'], to: 'SalesAdmin' },
         { grant: ['READ', 'fulfillOrder'],         to: 'WarehouseManager' }
     ]
     entity SalesOrders     as projection on db.SalesOrder
