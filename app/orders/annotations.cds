@@ -407,44 +407,64 @@ annotate service.SalesOrders with actions {
 annotate service.SalesOrders with actions {
     submitOrder @Core.OperationAvailable : {
         $edmJson : {
-            $Eq : [
-                { $Path : 'in/status_code' },
-                { $String : 'NEW' }
+            $And : [
+                { $Path : '/PlayerOrderService.EntityContainer/Configuration/canSubmitOrder' },
+                {
+                    $Eq : [
+                        { $Path : 'in/status_code' },
+                        { $String : 'NEW' }
+                    ]
+                }
             ]
         }
     };
 
     markAsPaid @Core.OperationAvailable : {
         $edmJson : {
-            $Eq : [
-                { $Path : 'in/status_code' },
-                { $String : 'SUBMITTED' }
+            $And : [
+                { $Path : '/PlayerOrderService.EntityContainer/Configuration/canMarkAsPaid' },
+                {
+                    $Eq : [
+                        { $Path : 'in/status_code' },
+                        { $String : 'SUBMITTED' }
+                    ]
+                }
             ]
         }
     };
 
     fulfillOrder @Core.OperationAvailable : {
         $edmJson : {
-            $Eq : [
-                { $Path : 'in/status_code' },
-                { $String : 'PAID' }
+            $And : [
+                { $Path : '/PlayerOrderService.EntityContainer/Configuration/canFulfillOrder' },
+                {
+                    $Eq : [
+                        { $Path : 'in/status_code' },
+                        { $String : 'PAID' }
+                    ]
+                }
             ]
         }
     };
 
     cancelOrder @Core.OperationAvailable : {
         $edmJson : {
-            $Or : [
+            $And : [
+                { $Path : '/PlayerOrderService.EntityContainer/Configuration/canCancelOrder' },
                 {
-                    $Eq : [
-                        { $Path : 'in/status_code' },
-                        { $String : 'NEW' }
-                    ]
-                },
-                {
-                    $Eq : [
-                        { $Path : 'in/status_code' },
-                        { $String : 'SUBMITTED' }
+                    $Or : [
+                        {
+                            $Eq : [
+                                { $Path : 'in/status_code' },
+                                { $String : 'NEW' }
+                            ]
+                        },
+                        {
+                            $Eq : [
+                                { $Path : 'in/status_code' },
+                                { $String : 'SUBMITTED' }
+                            ]
+                        }
                     ]
                 }
             ]
