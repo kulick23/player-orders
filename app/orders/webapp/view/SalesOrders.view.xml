@@ -1,0 +1,164 @@
+<mvc:View
+    controllerName="playerorders.orders.controller.SalesOrders"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+    <Page title="{i18n>salesOrdersTitle}">
+        <headerContent>
+            <Button
+                icon="sap-icon://add"
+                text="{i18n>createOrder}"
+                visible="{ui>/capabilities/canCreateOrder}"
+                press=".onOpenCreate" />
+            <Button
+                icon="sap-icon://refresh"
+                tooltip="{i18n>refresh}"
+                press=".onRefresh" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiResponsiveContentPadding">
+                <Panel
+                    headerText="{i18n>filtersTitle}"
+                    expandable="true"
+                    expanded="true">
+                    <content>
+                        <FlexBox wrap="Wrap" alignItems="End">
+                            <VBox width="18rem" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                                <Label text="{i18n>customerSearch}" labelFor="customerSearch" />
+                                <SearchField
+                                    id="customerSearch"
+                                    value="{ui>/filters/search}"
+                                    search=".onApplyFilters" />
+                            </VBox>
+
+                            <VBox width="14rem" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                                <Label text="{i18n>status}" labelFor="statusFilter" />
+                                <ComboBox
+                                    id="statusFilter"
+                                    selectedKey="{ui>/filters/status}"
+                                    items="{/OrderStatuses}">
+                                    <core:Item key="{code}" text="{description}" />
+                                </ComboBox>
+                            </VBox>
+
+                            <VBox width="14rem" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                                <Label text="{i18n>paymentMethod}" labelFor="paymentFilter" />
+                                <ComboBox
+                                    id="paymentFilter"
+                                    selectedKey="{ui>/filters/paymentMethod}">
+                                    <items>
+                                        <core:Item key="CARD" text="CARD" />
+                                        <core:Item key="PAYPAL" text="PAYPAL" />
+                                        <core:Item key="STRIPE" text="STRIPE" />
+                                    </items>
+                                </ComboBox>
+                            </VBox>
+
+                            <VBox width="12rem" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                                <Label text="{i18n>minimumAmount}" labelFor="minimumAmount" />
+                                <Input
+                                    id="minimumAmount"
+                                    type="Number"
+                                    value="{ui>/filters/minimumAmount}" />
+                            </VBox>
+
+                            <VBox width="13rem" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                                <Label text="{i18n>fromDate}" labelFor="fromDate" />
+                                <DatePicker
+                                    id="fromDate"
+                                    dateValue="{ui>/filters/fromDate}" />
+                            </VBox>
+                        </FlexBox>
+
+                        <OverflowToolbar>
+                            <Button
+                                text="{i18n>applyFilters}"
+                                type="Emphasized"
+                                press=".onApplyFilters" />
+                            <Button
+                                text="{i18n>clearFilters}"
+                                press=".onClearFilters" />
+                            <ToolbarSpacer />
+                            <Label text="{i18n>sortBy}" labelFor="sortField" />
+                            <Select
+                                id="sortField"
+                                selectedKey="{ui>/sorting/path}"
+                                change=".onSortChange">
+                                <core:Item key="orderDate" text="{i18n>orderDate}" />
+                                <core:Item key="totalAmount" text="{i18n>totalAmount}" />
+                                <core:Item key="customer/displayName" text="{i18n>customer}" />
+                            </Select>
+                            <Switch
+                                state="{ui>/sorting/descending}"
+                                customTextOn="{i18n>descending}"
+                                customTextOff="{i18n>ascending}"
+                                change=".onSortChange" />
+                        </OverflowToolbar>
+                    </content>
+                </Panel>
+
+                <Table
+                    id="ordersTable"
+                    items="{/SalesOrders}"
+                    growing="true"
+                    growingThreshold="20"
+                    noDataText="{i18n>noOrders}"
+                    itemPress=".onItemPress">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="{i18n>orders}" level="H2" />
+                            <ToolbarSpacer />
+                            <Text
+                                text="{i18n>openOrderHint}"
+                                class="sapUiVisibleOnlyOnDesktop" />
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column width="8rem"><Text text="{i18n>customer}" /></Column>
+                        <Column
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                            popinDisplay="Inline">
+                            <Text text="{i18n>orderDate}" />
+                        </Column>
+                        <Column width="8rem"><Text text="{i18n>status}" /></Column>
+                        <Column width="7rem" hAlign="End"><Text text="{i18n>totalAmount}" /></Column>
+                        <Column
+                            minScreenWidth="Desktop"
+                            demandPopin="true"
+                            popinDisplay="Inline">
+                            <Text text="{i18n>paymentMethod}" />
+                        </Column>
+                        <Column
+                            minScreenWidth="Desktop"
+                            demandPopin="true"
+                            popinDisplay="Inline"
+                            hAlign="End">
+                            <Text text="{i18n>discount}" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem type="Navigation">
+                            <cells>
+                                <ObjectIdentifier title="{customer/displayName}" />
+                                <Text text="{
+                                    path: 'orderDate',
+                                    type: 'sap.ui.model.odata.type.DateTimeOffset',
+                                    formatOptions: { style: 'medium' }
+                                }" />
+                                <ObjectStatus
+                                    text="{status/description}"
+                                    state="{path: 'status_code', formatter: '.formatter.statusState'}"
+                                    icon="{path: 'status_code', formatter: '.formatter.statusIcon'}" />
+                                <ObjectNumber number="{totalAmount}" />
+                                <Text text="{path: 'paymentMethod', formatter: '.formatter.paymentMethod'}" />
+                                <ObjectNumber number="{discountAmount}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

@@ -1,0 +1,23 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <Dialog title="{i18n>markAsPaid}" contentWidth="24rem">
+        <content>
+            <VBox class="sapUiContentPadding">
+                <Label text="{i18n>paymentProvider}" labelFor="paymentProvider" required="true" />
+                <Select
+                    id="paymentProvider"
+                    selectedKey="{ui>/paymentProvider}"
+                    width="100%">
+                    <core:Item key="STRIPE" text="STRIPE" />
+                    <core:Item key="CARD" text="CARD" />
+                    <core:Item key="PAYPAL" text="PAYPAL" />
+                </Select>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="{i18n>confirm}" type="Emphasized" press=".onConfirmPayment" />
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>cancel}" press=".onClosePayment" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

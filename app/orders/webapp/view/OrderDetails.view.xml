@@ -1,0 +1,185 @@
+<mvc:View
+    controllerName="playerorders.orders.controller.OrderDetails"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Page
+        title="{customer/displayName}"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <headerContent>
+            <Button
+                icon="sap-icon://edit"
+                text="{i18n>edit}"
+                visible="{ui>/capabilities/canUpdateOrder}"
+                enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isNew'}"
+                press=".onOpenEdit" />
+            <Button
+                icon="sap-icon://delete"
+                text="{i18n>delete}"
+                visible="{ui>/capabilities/canDeleteOrder}"
+                enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isNew'}"
+                press=".onDeleteOrder" />
+            <Button
+                text="{i18n>submitOrder}"
+                visible="{ui>/capabilities/canSubmitOrder}"
+                enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isNew'}"
+                press=".onSubmitOrder" />
+            <Button
+                text="{i18n>markAsPaid}"
+                visible="{ui>/capabilities/canMarkAsPaid}"
+                enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isSubmitted'}"
+                press=".onOpenPayment" />
+            <Button
+                text="{i18n>fulfillOrder}"
+                visible="{ui>/capabilities/canFulfillOrder}"
+                enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isPaid'}"
+                press=".onFulfillOrder" />
+            <Button
+                text="{i18n>cancelOrder}"
+                visible="{ui>/capabilities/canCancelOrder}"
+                enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isCancellable'}"
+                press=".onOpenCancel" />
+            <Button icon="sap-icon://refresh" tooltip="{i18n>refresh}" press=".onRefresh" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiResponsiveContentPadding">
+                <ObjectHeader
+                    title="{customer/displayName}"
+                    intro="{i18n>salesOrder}">
+                    <statuses>
+                        <ObjectStatus
+                            text="{status/description}"
+                            state="{path: 'status_code', formatter: '.formatter.statusState'}"
+                            icon="{path: 'status_code', formatter: '.formatter.statusIcon'}" />
+                    </statuses>
+                    <attributes>
+                        <ObjectAttribute title="{i18n>totalAmount}" text="{totalAmount}" />
+                        <ObjectAttribute
+                            title="{i18n>paymentMethod}"
+                            text="{path: 'paymentMethod', formatter: '.formatter.paymentMethod'}" />
+                    </attributes>
+                </ObjectHeader>
+
+                <IconTabBar id="orderTabs" class="sapUiSmallMarginTop">
+                    <items>
+                        <IconTabFilter
+                            key="details"
+                            text="{i18n>orderDetails}"
+                            icon="sap-icon://detail-view">
+                            <f:SimpleForm
+                                editable="false"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="4"
+                                columnsXL="2"
+                                columnsL="2">
+                                <Label text="{i18n>customer}" />
+                                <Text text="{customer/displayName}" />
+                                <Label text="{i18n>orderDate}" />
+                                <Text text="{
+                                    path: 'orderDate',
+                                    type: 'sap.ui.model.odata.type.DateTimeOffset',
+                                    formatOptions: { style: 'medium' }
+                                }" />
+                                <Label text="{i18n>status}" />
+                                <ObjectStatus
+                                    text="{status/description}"
+                                    state="{path: 'status_code', formatter: '.formatter.statusState'}" />
+                                <Label text="{i18n>totalAmount}" />
+                                <ObjectNumber number="{totalAmount}" />
+                                <Label text="{i18n>discount}" />
+                                <ObjectNumber number="{discountAmount}" />
+                                <Label text="{i18n>paymentMethod}" />
+                                <Text text="{path: 'paymentMethod', formatter: '.formatter.paymentMethod'}" />
+                                <Label text="{i18n>note}" />
+                                <Text text="{note}" wrapping="true" />
+                            </f:SimpleForm>
+                        </IconTabFilter>
+
+                        <IconTabFilter
+                            key="items"
+                            text="{i18n>orderItems}"
+                            icon="sap-icon://cart">
+                            <Table items="{items}" noDataText="{i18n>noItems}">
+                                <columns>
+                                    <Column><Text text="{i18n>product}" /></Column>
+                                    <Column hAlign="End"><Text text="{i18n>quantity}" /></Column>
+                                    <Column hAlign="End"><Text text="{i18n>unitPrice}" /></Column>
+                                    <Column hAlign="End"><Text text="{i18n>lineAmount}" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <ObjectIdentifier title="{product/name}" text="{product/type}" />
+                                            <ObjectNumber number="{quantity}" />
+                                            <ObjectNumber number="{unitPrice}" />
+                                            <ObjectNumber number="{lineAmount}" emphasized="true" />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </IconTabFilter>
+
+                        <IconTabFilter
+                            key="history"
+                            text="{i18n>processingHistory}"
+                            icon="sap-icon://history">
+                            <Title text="{i18n>payments}" level="H3" />
+                            <Table items="{payments}" noDataText="{i18n>noPayments}">
+                                <columns>
+                                    <Column><Text text="{i18n>provider}" /></Column>
+                                    <Column><Text text="{i18n>date}" /></Column>
+                                    <Column hAlign="End"><Text text="{i18n>amount}" /></Column>
+                                    <Column><Text text="{i18n>status}" /></Column>
+                                    <Column><Text text="{i18n>message}" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{provider}" />
+                                            <Text text="{
+                                                path: 'transactionDate',
+                                                type: 'sap.ui.model.odata.type.DateTimeOffset',
+                                                formatOptions: { style: 'medium' }
+                                            }" />
+                                            <ObjectNumber number="{amount}" />
+                                            <ObjectStatus text="{status}" state="Success" />
+                                            <Text text="{message}" />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+
+                            <Title text="{i18n>fulfillmentLog}" level="H3" class="sapUiLargeMarginTop" />
+                            <Table items="{fulfillments}" noDataText="{i18n>noFulfillments}">
+                                <columns>
+                                    <Column><Text text="{i18n>product}" /></Column>
+                                    <Column><Text text="{i18n>date}" /></Column>
+                                    <Column><Text text="{i18n>result}" /></Column>
+                                    <Column><Text text="{i18n>message}" /></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{product/name}" />
+                                            <Text text="{
+                                                path: 'fulfilledAt',
+                                                type: 'sap.ui.model.odata.type.DateTimeOffset',
+                                                formatOptions: { style: 'medium' }
+                                            }" />
+                                            <ObjectStatus text="{result}" state="Success" />
+                                            <Text text="{message}" />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

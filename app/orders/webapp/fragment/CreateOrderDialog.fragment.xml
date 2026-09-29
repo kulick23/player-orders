@@ -1,0 +1,82 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+    <Dialog
+        id="createOrderDialog"
+        title="{i18n>createOrder}"
+        contentWidth="46rem"
+        stretchOnPhone="true">
+        <content>
+            <VBox class="sapUiContentPadding">
+                <Label text="{i18n>customer}" required="true" labelFor="createCustomerSelect" />
+                <Select
+                    id="createCustomerSelect"
+                    width="100%"
+                    selectedKey="{ui>/newOrder/customerID}"
+                    items="{/Customers}">
+                    <core:Item key="{ID}" text="{displayName}" />
+                </Select>
+
+                <Label text="{i18n>discount}" labelFor="createDiscount" class="sapUiSmallMarginTop" />
+                <Input
+                    id="createDiscount"
+                    type="Number"
+                    value="{ui>/newOrder/discountAmount}" />
+
+                <Label text="{i18n>note}" labelFor="createNote" class="sapUiSmallMarginTop" />
+                <TextArea
+                    id="createNote"
+                    value="{ui>/newOrder/note}"
+                    rows="2"
+                    width="100%" />
+
+                <Toolbar class="sapUiSmallMarginTop">
+                    <Title text="{i18n>orderItems}" level="H4" />
+                    <ToolbarSpacer />
+                    <Button
+                        icon="sap-icon://add"
+                        text="{i18n>addItem}"
+                        press=".onAddOrderItem" />
+                </Toolbar>
+
+                <Table items="{ui>/newOrder/items}">
+                    <columns>
+                        <Column><Text text="{i18n>product}" /></Column>
+                        <Column width="9rem"><Text text="{i18n>quantity}" /></Column>
+                        <Column width="3rem" />
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Select
+                                    selectedKey="{ui>productID}"
+                                    items="{path: '/GameProducts', templateShareable: false}"
+                                    width="100%">
+                                    <core:Item key="{ID}" text="{name}" />
+                                </Select>
+                                <StepInput
+                                    value="{ui>quantity}"
+                                    min="1"
+                                    max="999" />
+                                <Button
+                                    icon="sap-icon://delete"
+                                    type="Transparent"
+                                    tooltip="{i18n>removeItem}"
+                                    press=".onRemoveOrderItem" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button
+                text="{i18n>create}"
+                type="Emphasized"
+                press=".onCreateOrder" />
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>cancel}" press=".onCancelCreate" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
