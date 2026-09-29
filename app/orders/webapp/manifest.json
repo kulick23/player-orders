@@ -49,6 +49,7 @@
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
+        "sap.fe.core": {},
         "sap.fe.templates": {}
       }
     },
@@ -97,9 +98,25 @@
           "pattern": "SalesOrders({key})/items({key2}):?query:",
           "name": "SalesOrderItemsObjectPage",
           "target": "SalesOrderItemsObjectPage"
+        },
+        {
+          "pattern": "operations:?query:",
+          "name": "Operations",
+          "target": "Operations"
         }
       ],
       "targets": {
+        "Operations": {
+          "type": "Component",
+          "id": "Operations",
+          "name": "sap.fe.core.fpm",
+          "options": {
+            "settings": {
+              "viewName": "playerorders.orders.ext.view.Operations",
+              "contextPath": "/SalesOrders"
+            }
+          }
+        },
         "SalesOrdersList": {
           "type": "Component",
           "id": "SalesOrdersList",

@@ -1,0 +1,101 @@
+<mvc:View
+    controllerName="playerorders.orders.ext.controller.Operations"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    height="100%">
+
+    <Page
+        id="operationsPage"
+        title="{i18n>operationsTitle}">
+
+        <headerContent>
+            <Button
+                id="refreshButton"
+                icon="sap-icon://refresh"
+                tooltip="{i18n>refreshButtonTooltip}"
+                press=".onRefresh" />
+        </headerContent>
+
+        <content>
+            <VBox
+                id="contentBox"
+                class="sapUiSmallMargin"
+                renderType="Bare">
+
+                <Title
+                    id="pageTitle"
+                    text="{i18n>operationsTitle}"
+                    level="H2" />
+
+                <Text
+                    id="pageDescription"
+                    text="{i18n>operationsDescription}"
+                    class="sapUiTinyMarginTop" />
+
+                <Table
+                    id="ordersTable"
+                    items="{/SalesOrders}"
+                    growing="true"
+                    growingThreshold="10"
+                    noDataText="No sales orders found"
+                    class="sapUiMediumMarginTop">
+
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title
+                                text="Sales Orders"
+                                level="H3" />
+
+                            <ToolbarSpacer />
+
+                            <SearchField
+                                id="orderSearchField"
+                                width="20rem"
+                                placeholder="Search by customer"
+                                search=".onSearch"
+                                liveChange=".onSearch" />
+                        </OverflowToolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column>
+                            <Text text="Customer" />
+                        </Column>
+
+                        <Column>
+                            <Text text="Order Date" />
+                        </Column>
+
+                        <Column>
+                            <Text text="Status" />
+                        </Column>
+
+                        <Column hAlign="End">
+                            <Text text="Total Amount" />
+                        </Column>
+
+                        <Column>
+                            <Text text="Payment Method" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem type="Active">
+                            <cells>
+                                <Text text="{customer/displayName}" />
+
+                                <Text text="{orderDate}" />
+
+                                <ObjectStatus text="{status/description}" />
+
+                                <ObjectNumber number="{totalAmount}" />
+
+                                <Text text="{paymentMethod}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
