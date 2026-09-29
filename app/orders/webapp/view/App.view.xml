@@ -1,6 +1,35 @@
 <mvc:View
+    controllerName="playerorders.orders.controller.App"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:tnt="sap.tnt"
     xmlns="sap.m"
     displayBlock="true">
-    <App id="app" busy="{ui>/busy}" />
+    <VBox class="ordersShell" fitContainer="true">
+        <OverflowToolbar class="ordersTopBar">
+            <Button icon="sap-icon://menu2" type="Transparent" tooltip="{i18n>toggleNavigation}" press=".onToggleNavigation" />
+            <Title text="PLAYER ORDERS" level="H1" class="ordersBrand" />
+            <ToolbarSpacer />
+            <Text text="{i18n>administrator}" class="ordersUserRole" />
+            <Avatar initials="PO" displaySize="XS" backgroundColor="Accent6" />
+        </OverflowToolbar>
+
+        <HBox class="ordersWorkspace" fitContainer="true">
+            <tnt:SideNavigation id="sideNavigation" expanded="true" class="ordersSideNavigation" itemSelect=".onItemSelect">
+                <tnt:NavigationList selectedKey="orders">
+                    <tnt:NavigationListItem key="orders" text="{i18n>orders}" icon="sap-icon://sales-order" />
+                </tnt:NavigationList>
+                <tnt:fixedItem>
+                    <tnt:NavigationList>
+                        <tnt:NavigationListItem key="about" text="{i18n>orderManagement}" icon="sap-icon://hint" />
+                    </tnt:NavigationList>
+                </tnt:fixedItem>
+            </tnt:SideNavigation>
+
+            <App id="app" busy="{ui>/busy}" class="ordersContent">
+                <layoutData>
+                    <FlexItemData growFactor="1" baseSize="0" />
+                </layoutData>
+            </App>
+        </HBox>
+    </VBox>
 </mvc:View>

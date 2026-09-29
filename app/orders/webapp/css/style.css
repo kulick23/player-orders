@@ -1,0 +1,178 @@
+html,
+body,
+body > div,
+.ordersShell {
+  height: 100%;
+}
+
+.ordersShell,
+.ordersContent,
+.ordersPage.sapMPage,
+.ordersPage .sapMPageBgStandard,
+.ordersPage .sapMPageScroll {
+  background: #f7f8fa;
+}
+
+.ordersTopBar.sapMTB {
+  min-height: 4.5rem;
+  padding: 0 2rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: none;
+}
+
+.ordersBrand.sapMTitle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0 0.75rem;
+  background: #37ed78;
+  color: #07130c;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.ordersUserRole {
+  color: #4b5563;
+}
+
+.ordersWorkspace {
+  min-height: 0;
+}
+
+.ordersSideNavigation.sapTntSideNavigation {
+  width: 15rem;
+  min-width: 15rem;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+}
+
+.ordersSideNavigation .sapTntNavLIItemSelected {
+  border-left: 3px solid #6956d9;
+  background: #f4f1ff;
+}
+
+.ordersSideNavigation .sapTntNavLIItemSelected .sapMText,
+.ordersSideNavigation .sapTntNavLIItemSelected .sapUiIcon {
+  color: #5846c7;
+}
+
+.ordersContent {
+  min-width: 0;
+}
+
+.ordersPageContent {
+  width: 100%;
+  max-width: 92rem;
+  margin: 0 auto;
+  padding: 2.5rem 3rem 3rem;
+  box-sizing: border-box;
+}
+
+.ordersHeroTitle.sapMTitle {
+  color: #111827;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.ordersSubtitle {
+  margin-top: 0.35rem;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.ordersPrimaryActions {
+  margin: 2rem 0 1rem;
+  gap: 0.75rem;
+}
+
+.ordersSearch.sapMSF {
+  max-width: none;
+}
+
+.ordersSearch .sapMSFF {
+  border-radius: 0.5rem;
+  border-color: #d7dbe2;
+  background: #ffffff;
+}
+
+.ordersCreateButton .sapMBtnInner {
+  border-color: #6956d9;
+  border-radius: 0.5rem;
+  background: #6956d9;
+}
+
+.ordersFilterPanel.sapMPanel {
+  margin-bottom: 1rem;
+  border: 1px solid #e2e5ea;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.ordersCard {
+  padding: 0 1rem 1rem;
+  border: 1px solid #dde1e6;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.ordersCard .sapMTB {
+  min-height: 4rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ordersCard .sapMListTblHeaderCell {
+  background: #fafafa;
+}
+
+.ordersCard .sapMLIB {
+  background: #ffffff;
+}
+
+.ordersCard .sapMLIB:hover {
+  background: #f8f7ff;
+}
+
+.ordersDetailActions {
+  margin: 1.5rem 0;
+  gap: 0.5rem;
+}
+
+.ordersSummaryCard {
+  padding: 1.5rem;
+  border: 1px solid #dde1e6;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.ordersTabs.sapMITB {
+  margin-top: 1rem;
+  padding: 0 1rem 1rem;
+  border: 1px solid #dde1e6;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .ordersPageContent {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .ordersHeroTitle.sapMTitle {
+    font-size: 2rem;
+  }
+
+  .ordersSideNavigation.sapTntSideNavigation {
+    width: 3rem;
+    min-width: 3rem;
+  }
+
+  .ordersUserRole {
+    display: none;
+  }
+}
