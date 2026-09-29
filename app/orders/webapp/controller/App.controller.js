@@ -8,6 +8,18 @@ sap.ui.define([
     onInit: function () {
       const bIsEnglish = Localization.getLanguage().toLowerCase().startsWith("en");
       this.getOwnerComponent().getModel("ui").setProperty("/isEnglish", bIsEnglish);
+      this.getOwnerComponent().getRouter().attachRouteMatched(
+        this.onRouteMatched,
+        this
+      );
+    },
+
+    onRouteMatched: function (oEvent) {
+      const sRouteName = oEvent.getParameter("name");
+      this.getOwnerComponent().getModel("ui").setProperty(
+        "/selectedNavigation",
+        sRouteName === "products" ? "products" : "orders"
+      );
     },
 
     onLanguageChange: function (oEvent) {
@@ -15,8 +27,9 @@ sap.ui.define([
     },
 
     onItemSelect: function (oEvent) {
-      if (oEvent.getParameter("item").getKey() === "orders") {
-        this.getOwnerComponent().getRouter().navTo("orders");
+      const sKey = oEvent.getParameter("item").getKey();
+      if (["orders", "products"].includes(sKey)) {
+        this.getOwnerComponent().getRouter().navTo(sKey);
       }
     }
   });

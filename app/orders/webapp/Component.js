@@ -19,7 +19,9 @@ sap.ui.define([
           canSubmitOrder: false,
           canMarkAsPaid: false,
           canFulfillOrder: false,
-          canCancelOrder: false
+          canCancelOrder: false,
+          canCreateProduct: false,
+          canReplenishStock: false
         },
         filters: {
           search: "",
@@ -37,7 +39,23 @@ sap.ui.define([
         },
         editOrder: { customerID: "", discountAmount: 0, note: "" },
         paymentProvider: "STRIPE",
-        cancellationReason: ""
+        cancellationReason: "",
+        selectedNavigation: "orders",
+        productSearch: "",
+        newProduct: {
+          name: "",
+          description: "",
+          type: "",
+          price: 0,
+          active: true,
+          stockRelevant: true,
+          stockQuantity: 0
+        },
+        stockReplenishment: {
+          productName: "",
+          currentQuantity: 0,
+          quantity: 1
+        }
       }), "ui");
 
       this.getRouter().initialize();

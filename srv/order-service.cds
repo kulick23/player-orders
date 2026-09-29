@@ -15,6 +15,8 @@ service PlayerOrderService {
             canMarkAsPaid   : Boolean;
             canFulfillOrder : Boolean;
             canCancelOrder  : Boolean;
+            canCreateProduct : Boolean;
+            canReplenishStock : Boolean;
     }
 
     @odata.draft.enabled
@@ -51,9 +53,12 @@ service PlayerOrderService {
     @restrict: [
         { grant: 'READ',             to: 'Customer' },
         { grant: '*',                to: 'SalesAdmin' },
-        { grant: ['READ', 'UPDATE'], to: 'WarehouseManager' }
+        { grant: ['READ', 'CREATE', 'UPDATE', 'replenishStock'], to: 'WarehouseManager' }
     ]
-    entity GameProducts as projection on db.GameProduct;
+    entity GameProducts as projection on db.GameProduct
+        actions {
+            action replenishStock(quantity: Integer) returns GameProducts;
+        };
 
     @readonly
     entity OrderStatuses as projection on db.OrderStatus;

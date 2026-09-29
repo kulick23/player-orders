@@ -1,0 +1,28 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns="sap.m">
+    <Dialog id="createProductDialog" title="{i18n>createProduct}" contentWidth="34rem" stretchOnPhone="true">
+        <content>
+            <f:SimpleForm editable="true" layout="ResponsiveGridLayout" class="sapUiContentPadding">
+                <Label text="{i18n>productName}" required="true" />
+                <Input value="{ui>/newProduct/name}" maxLength="100" />
+                <Label text="{i18n>productDescription}" />
+                <TextArea value="{ui>/newProduct/description}" rows="3" maxLength="300" />
+                <Label text="{i18n>productType}" />
+                <Input value="{ui>/newProduct/type}" maxLength="30" />
+                <Label text="{i18n>price}" required="true" />
+                <Input value="{ui>/newProduct/price}" type="Number" />
+                <Label text="{i18n>active}" />
+                <Switch state="{ui>/newProduct/active}" />
+                <Label text="{i18n>stockRelevant}" />
+                <Switch state="{ui>/newProduct/stockRelevant}" />
+                <Label text="{i18n>stockQuantity}" />
+                <StepInput value="{ui>/newProduct/stockQuantity}" min="0" max="999999" enabled="{ui>/newProduct/stockRelevant}" />
+            </f:SimpleForm>
+        </content>
+        <beginButton>
+            <Button text="{i18n>create}" type="Emphasized" press=".onCreateProduct" />
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>cancel}" press=".onCancelCreate" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

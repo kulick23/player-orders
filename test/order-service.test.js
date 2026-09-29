@@ -18,6 +18,9 @@ const orderPath = (id) =>
 const actionPath = (id, action) =>
   `${orderPath(id)}/PlayerOrderService.${action}`;
 
+const productActionPath = (id, action) =>
+  `/orders/GameProducts(ID=${id})/PlayerOrderService.${action}`;
+
 const options = (auth, allowError = false) => ({
   auth,
   ...(allowError ? { validateStatus: () => true } : {}),
@@ -104,6 +107,8 @@ describe("PlayerOrderService", () => {
         canMarkAsPaid: false,
         canFulfillOrder: false,
         canCancelOrder: true,
+        canCreateProduct: false,
+        canReplenishStock: false,
       });
     });
 
@@ -121,6 +126,8 @@ describe("PlayerOrderService", () => {
         canMarkAsPaid: true,
         canFulfillOrder: false,
         canCancelOrder: true,
+        canCreateProduct: true,
+        canReplenishStock: true,
       });
     });
 
@@ -138,6 +145,8 @@ describe("PlayerOrderService", () => {
         canMarkAsPaid: false,
         canFulfillOrder: true,
         canCancelOrder: false,
+        canCreateProduct: true,
+        canReplenishStock: true,
       });
     });
 
@@ -194,6 +203,68 @@ describe("PlayerOrderService", () => {
 
       expect(updated.status).to.equal(200);
       expect(product.data.stockQuantity).to.equal(45);
+    });
+
+    it("forbids a customer from creating products", async () => {
+      const response = await POST(
+        "/orders/GameProducts",
+        {
+          name: "Customer product",
+          price: 1,
+          active: true,
+          stockRelevant: true,
+          stockQuantity: 1,
+        },
+        options(CUSTOMER, true),
+      );
+
+      expect(response.status).to.equal(403);
+    });
+
+    it("allows a warehouse manager to create products", async () => {
+      const response = await POST(
+        "/orders/GameProducts",
+        {
+          name: "Collector Box",
+          description: "Physical collector edition",
+          type: "MERCHANDISE",
+          price: 39.99,
+          active: true,
+          stockRelevant: true,
+          stockQuantity: 12,
+        },
+        options(WAREHOUSE),
+      );
+
+      expect(response.status).to.equal(201);
+      expect(response.data).to.include({
+        name: "Collector Box",
+        stockQuantity: 12,
+      });
+    });
+
+    it("allows a warehouse manager to replenish product stock", async () => {
+      const response = await POST(
+        productActionPath(SHIRT_PRODUCT_ID, "replenishStock"),
+        { quantity: 15 },
+        options(WAREHOUSE),
+      );
+
+      expect(response.status).to.equal(200);
+      expect(response.data.stockQuantity).to.equal(65);
+    });
+
+    it("rejects an invalid replenishment quantity", async () => {
+      const response = await POST(
+        productActionPath(SHIRT_PRODUCT_ID, "replenishStock"),
+        { quantity: 0 },
+        options(WAREHOUSE, true),
+      );
+
+      expect(response.status).to.equal(400);
+      expect(response.data.error.message).to.equal(
+        "Replenishment quantity must be a positive integer",
+      );
     });
 
     it("prevents direct writes to payment history", async () => {

@@ -1,0 +1,20 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns="sap.m">
+    <Dialog id="replenishStockDialog" title="{i18n>replenishProduct}" contentWidth="28rem" stretchOnPhone="true">
+        <content>
+            <f:SimpleForm editable="true" layout="ResponsiveGridLayout" class="sapUiContentPadding">
+                <Label text="{i18n>product}" />
+                <Text text="{ui>/stockReplenishment/productName}" />
+                <Label text="{i18n>currentStock}" />
+                <ObjectNumber number="{ui>/stockReplenishment/currentQuantity}" />
+                <Label text="{i18n>quantityToAdd}" required="true" />
+                <StepInput value="{ui>/stockReplenishment/quantity}" min="1" max="999999" />
+            </f:SimpleForm>
+        </content>
+        <beginButton>
+            <Button text="{i18n>replenishStock}" type="Emphasized" press=".onReplenishStock" />
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>cancel}" press=".onCancelReplenish" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

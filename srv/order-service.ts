@@ -19,7 +19,57 @@ export default class PlayerOrderService extends cds.ApplicationService {
         canMarkAsPaid: isSalesAdmin,
         canFulfillOrder: isWarehouseManager,
         canCancelOrder: isCustomer || isSalesAdmin,
+        canCreateProduct: isSalesAdmin || isWarehouseManager,
+        canReplenishStock: isSalesAdmin || isWarehouseManager,
       };
+    });
+
+    this.before(["CREATE", "UPDATE"], GameProducts, (req) => {
+      if (Object.prototype.hasOwnProperty.call(req.data, "price")) {
+        const price = Number(req.data.price);
+        if (!Number.isFinite(price) || price < 0) {
+          return req.reject(400, "Product price cannot be negative");
+        }
+      }
+
+      if (Object.prototype.hasOwnProperty.call(req.data, "stockQuantity")) {
+        const stockQuantity = Number(req.data.stockQuantity);
+        if (!Number.isInteger(stockQuantity) || stockQuantity < 0) {
+          return req.reject(400, "Stock quantity must be a non-negative integer");
+        }
+      }
+    });
+
+    this.on("replenishStock", GameProducts, async (req) => {
+      const { ID } = req.params[0];
+      const quantity = Number(req.data.quantity);
+      const tx = cds.tx(req);
+
+      if (!Number.isInteger(quantity) || quantity <= 0) {
+        return req.reject(400, "Replenishment quantity must be a positive integer");
+      }
+
+      const product = await tx.run(
+        SELECT.one.from("playerorders.GameProduct").where({ ID }),
+      );
+
+      if (!product) {
+        return req.reject(404, "Product not found");
+      }
+
+      if (!product.stockRelevant) {
+        return req.reject(400, "Stock is not tracked for this product");
+      }
+
+      await tx.run(
+        UPDATE.entity("playerorders.GameProduct")
+          .set({ stockQuantity: Number(product.stockQuantity) + quantity })
+          .where({ ID }),
+      );
+
+      return tx.run(
+        SELECT.one.from("playerorders.GameProduct").where({ ID }),
+      );
     });
 
     const customerIDFor = async (req: Request) => {

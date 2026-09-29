@@ -18,8 +18,9 @@
                     <tnt:layoutData>
                         <FlexItemData growFactor="1" baseSize="0" />
                     </tnt:layoutData>
-                    <tnt:NavigationList selectedKey="orders">
+                    <tnt:NavigationList selectedKey="{ui>/selectedNavigation}">
                         <tnt:NavigationListItem key="orders" text="{i18n>orders}" icon="sap-icon://sales-order" />
+                        <tnt:NavigationListItem key="products" text="{i18n>products}" icon="sap-icon://product" />
                     </tnt:NavigationList>
                 </tnt:SideNavigation>
                 <HBox alignItems="Center" justifyContent="SpaceBetween" class="ordersSidebarFooter">

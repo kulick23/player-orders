@@ -1,0 +1,80 @@
+<mvc:View
+    controllerName="playerorders.orders.controller.Products"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page showHeader="false" class="ordersPage">
+        <content>
+            <VBox class="ordersPageContent">
+                <Title text="{i18n>productsPageTitle}" level="H1" class="ordersHeroTitle" />
+                <Text text="{i18n>productsPageSubtitle}" class="ordersSubtitle" />
+
+                <FlexBox wrap="Wrap" alignItems="Center" class="ordersPrimaryActions">
+                    <SearchField
+                        value="{ui>/productSearch}"
+                        placeholder="{i18n>searchProducts}"
+                        liveChange=".onSearch"
+                        search=".onSearch"
+                        class="ordersSearch">
+                        <layoutData>
+                            <FlexItemData growFactor="1" baseSize="24rem" />
+                        </layoutData>
+                    </SearchField>
+                    <Button
+                        icon="sap-icon://add"
+                        text="{i18n>createProduct}"
+                        type="Emphasized"
+                        visible="{ui>/capabilities/canCreateProduct}"
+                        press=".onOpenCreate"
+                        class="ordersCreateButton" />
+                    <Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>refresh}" press=".onRefresh" />
+                </FlexBox>
+
+                <VBox class="ordersCard">
+                    <Table id="productsTable" items="{/GameProducts}" growing="true" growingThreshold="20">
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title text="{i18n>products}" level="H2" />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column><Text text="{i18n>productName}" /></Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>productType}" /></Column>
+                            <Column width="8rem" hAlign="End"><Text text="{i18n>price}" /></Column>
+                            <Column width="10rem"><Text text="{i18n>stockRelevant}" /></Column>
+                            <Column width="8rem" hAlign="End"><Text text="{i18n>stockQuantity}" /></Column>
+                            <Column width="8rem"><Text text="{i18n>status}" /></Column>
+                            <Column width="10rem" hAlign="End" />
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <ObjectIdentifier title="{name}" text="{description}" />
+                                    <Text text="{type}" />
+                                    <ObjectNumber number="{price}" />
+                                    <VBox>
+                                        <ObjectStatus text="{i18n>tracked}" state="Information" visible="{stockRelevant}" />
+                                        <ObjectStatus text="{i18n>notTracked}" visible="{= !${stockRelevant} }" />
+                                    </VBox>
+                                    <HBox justifyContent="End">
+                                        <ObjectNumber number="{stockQuantity}" emphasized="true" visible="{stockRelevant}" />
+                                        <Text text="—" visible="{= !${stockRelevant} }" />
+                                    </HBox>
+                                    <VBox>
+                                        <ObjectStatus text="{i18n>active}" state="Success" visible="{active}" />
+                                        <ObjectStatus text="{i18n>inactive}" state="Error" visible="{= !${active} }" />
+                                    </VBox>
+                                    <Button
+                                        icon="sap-icon://add-product"
+                                        text="{i18n>replenishStock}"
+                                        visible="{ui>/capabilities/canReplenishStock}"
+                                        enabled="{stockRelevant}"
+                                        press=".onOpenReplenish" />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </VBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

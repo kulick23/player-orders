@@ -68,10 +68,12 @@
       },
       "routes": [
         { "pattern": "", "name": "orders", "target": "orders" },
+        { "pattern": "products", "name": "products", "target": "products" },
         { "pattern": "orders/{orderId}", "name": "orderDetails", "target": "orderDetails" }
       ],
       "targets": {
         "orders": { "viewId": "orders", "viewName": "SalesOrders" },
+        "products": { "viewId": "products", "viewName": "Products" },
         "orderDetails": { "viewId": "orderDetails", "viewName": "OrderDetails" }
       }
     }
