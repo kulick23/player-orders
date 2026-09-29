@@ -6,7 +6,6 @@
     displayBlock="true">
     <VBox class="ordersShell" fitContainer="true">
         <OverflowToolbar class="ordersTopBar">
-            <Button icon="sap-icon://menu2" type="Transparent" tooltip="{i18n>toggleNavigation}" press=".onToggleNavigation" />
             <Title text="PLAYER ORDERS" level="H1" class="ordersBrand" />
             <ToolbarSpacer />
             <Text text="{i18n>administrator}" class="ordersUserRole" />
@@ -14,16 +13,25 @@
         </OverflowToolbar>
 
         <HBox class="ordersWorkspace" fitContainer="true">
-            <tnt:SideNavigation id="sideNavigation" expanded="true" class="ordersSideNavigation" itemSelect=".onItemSelect">
-                <tnt:NavigationList selectedKey="orders">
-                    <tnt:NavigationListItem key="orders" text="{i18n>orders}" icon="sap-icon://sales-order" />
-                </tnt:NavigationList>
-                <tnt:fixedItem>
-                    <tnt:NavigationList>
-                        <tnt:NavigationListItem key="about" text="{i18n>orderManagement}" icon="sap-icon://hint" />
+            <VBox fitContainer="true" class="ordersSidebar">
+                <tnt:SideNavigation id="sideNavigation" expanded="true" class="ordersSideNavigation" itemSelect=".onItemSelect">
+                    <tnt:layoutData>
+                        <FlexItemData growFactor="1" baseSize="0" />
+                    </tnt:layoutData>
+                    <tnt:NavigationList selectedKey="orders">
+                        <tnt:NavigationListItem key="orders" text="{i18n>orders}" icon="sap-icon://sales-order" />
                     </tnt:NavigationList>
-                </tnt:fixedItem>
-            </tnt:SideNavigation>
+                </tnt:SideNavigation>
+                <HBox alignItems="Center" justifyContent="SpaceBetween" class="ordersSidebarFooter">
+                    <Text text="{i18n>language}" />
+                    <Switch
+                        state="{ui>/isEnglish}"
+                        customTextOn="EN"
+                        customTextOff="RU"
+                        tooltip="{i18n>changeLanguage}"
+                        change=".onLanguageChange" />
+                </HBox>
+            </VBox>
 
             <App id="app" busy="{ui>/busy}" class="ordersContent">
                 <layoutData>

@@ -1,12 +1,17 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller"
-], function (Controller) {
+  "sap/ui/core/mvc/Controller",
+  "sap/base/i18n/Localization"
+], function (Controller, Localization) {
   "use strict";
 
   return Controller.extend("playerorders.orders.controller.App", {
-    onToggleNavigation: function () {
-      const oNavigation = this.byId("sideNavigation");
-      oNavigation.setExpanded(!oNavigation.getExpanded());
+    onInit: function () {
+      const bIsEnglish = Localization.getLanguage().toLowerCase().startsWith("en");
+      this.getOwnerComponent().getModel("ui").setProperty("/isEnglish", bIsEnglish);
+    },
+
+    onLanguageChange: function (oEvent) {
+      Localization.setLanguage(oEvent.getParameter("state") ? "en" : "ru");
     },
 
     onItemSelect: function (oEvent) {
