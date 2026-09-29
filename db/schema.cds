@@ -20,6 +20,12 @@ entity GameProduct : cuid, managed {
   active        : Boolean default true;
   stockRelevant : Boolean default false;
   stockQuantity : Integer default 0;
+  image         : LargeBinary
+                    @Core.MediaType: imageType
+                    @Core.ContentDisposition.Filename: imageName
+                    @Core.ContentDisposition.Type: 'inline';
+  imageType     : String(100) @Core.IsMediaType;
+  imageName     : String(255);
 }
 
 entity OrderStatus {

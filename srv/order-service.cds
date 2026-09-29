@@ -17,6 +17,7 @@ service PlayerOrderService {
             canCancelOrder  : Boolean;
             canCreateProduct : Boolean;
             canReplenishStock : Boolean;
+            canManageProductImage : Boolean;
     }
 
     @odata.draft.enabled
@@ -53,11 +54,16 @@ service PlayerOrderService {
     @restrict: [
         { grant: 'READ',             to: 'Customer' },
         { grant: '*',                to: 'SalesAdmin' },
-        { grant: ['READ', 'CREATE', 'UPDATE', 'replenishStock'], to: 'WarehouseManager' }
+        { grant: ['READ', 'CREATE', 'UPDATE', 'replenishStock', 'setImage'], to: 'WarehouseManager' }
     ]
     entity GameProducts as projection on db.GameProduct
         actions {
             action replenishStock(quantity: Integer) returns GameProducts;
+            action setImage(
+                image: LargeBinary,
+                imageType: String(100),
+                imageName: String(255)
+            ) returns GameProducts;
         };
 
     @readonly

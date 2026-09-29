@@ -37,18 +37,26 @@
                             </OverflowToolbar>
                         </headerToolbar>
                         <columns>
-                            <Column><Text text="{i18n>productName}" /></Column>
+                            <Column width="20rem"><Text text="{i18n>productName}" /></Column>
                             <Column minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>productType}" /></Column>
                             <Column width="8rem" hAlign="End"><Text text="{i18n>price}" /></Column>
                             <Column width="10rem"><Text text="{i18n>stockRelevant}" /></Column>
                             <Column width="8rem" hAlign="End"><Text text="{i18n>stockQuantity}" /></Column>
                             <Column width="8rem"><Text text="{i18n>status}" /></Column>
-                            <Column width="10rem" hAlign="End" />
+                            <Column width="16rem" hAlign="End" />
                         </columns>
                         <items>
                             <ColumnListItem>
                                 <cells>
-                                    <ObjectIdentifier title="{name}" text="{description}" />
+                                    <HBox alignItems="Center" class="productIdentity">
+                                        <Avatar
+                                            displayShape="Square"
+                                            displaySize="M"
+                                            icon="sap-icon://product"
+                                            src="{parts: ['ID', 'imageType', 'modifiedAt'], formatter: '.formatProductImageUrl'}"
+                                            class="productImage" />
+                                        <ObjectIdentifier title="{name}" text="{description}" />
+                                    </HBox>
                                     <Text text="{type}" />
                                     <ObjectNumber number="{price}" />
                                     <VBox>
@@ -63,12 +71,20 @@
                                         <ObjectStatus text="{i18n>active}" state="Success" visible="{active}" />
                                         <ObjectStatus text="{i18n>inactive}" state="Error" visible="{= !${active} }" />
                                     </VBox>
-                                    <Button
-                                        icon="sap-icon://add-product"
-                                        text="{i18n>replenishStock}"
-                                        visible="{ui>/capabilities/canReplenishStock}"
-                                        enabled="{stockRelevant}"
-                                        press=".onOpenReplenish" />
+                                    <HBox justifyContent="End">
+                                        <Button
+                                            icon="sap-icon://picture"
+                                            tooltip="{i18n>uploadProductImage}"
+                                            visible="{ui>/capabilities/canManageProductImage}"
+                                            press=".onOpenImageUpload"
+                                            class="sapUiTinyMarginEnd" />
+                                        <Button
+                                            icon="sap-icon://add-product"
+                                            text="{i18n>replenishStock}"
+                                            visible="{ui>/capabilities/canReplenishStock}"
+                                            enabled="{stockRelevant}"
+                                            press=".onOpenReplenish" />
+                                    </HBox>
                                 </cells>
                             </ColumnListItem>
                         </items>

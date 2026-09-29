@@ -1,4 +1,4 @@
-<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns="sap.m">
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:u="sap.ui.unified" xmlns="sap.m">
     <Dialog id="createProductDialog" title="{i18n>createProduct}" contentWidth="34rem" stretchOnPhone="true">
         <content>
             <f:SimpleForm editable="true" layout="ResponsiveGridLayout" class="sapUiContentPadding">
@@ -16,6 +16,16 @@
                 <Switch state="{ui>/newProduct/stockRelevant}" />
                 <Label text="{i18n>stockQuantity}" />
                 <StepInput value="{ui>/newProduct/stockQuantity}" min="0" max="999999" enabled="{ui>/newProduct/stockRelevant}" />
+                <Label text="{i18n>productImage}" />
+                <u:FileUploader
+                    id="createProductImageUploader"
+                    value="{ui>/newProduct/imageName}"
+                    accept="image/jpeg,image/png,image/webp"
+                    maximumFileSize="2"
+                    change=".onCreateImageSelected"
+                    typeMissmatch=".onImageTypeMismatch"
+                    fileSizeExceed=".onImageSizeExceeded"
+                    width="100%" />
             </f:SimpleForm>
         </content>
         <beginButton>

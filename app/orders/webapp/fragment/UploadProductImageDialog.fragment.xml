@@ -1,0 +1,27 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:u="sap.ui.unified" xmlns="sap.m">
+    <Dialog id="productImageDialog" title="{i18n>uploadProductImage}" contentWidth="32rem" stretchOnPhone="true">
+        <content>
+            <f:SimpleForm editable="true" layout="ResponsiveGridLayout" class="sapUiContentPadding">
+                <Label text="{i18n>productName}" />
+                <Text text="{ui>/productImageUpload/productName}" />
+                <Label text="{i18n>productImage}" required="true" />
+                <u:FileUploader
+                    id="productImageUploader"
+                    value="{ui>/productImageUpload/imageName}"
+                    accept="image/jpeg,image/png,image/webp"
+                    maximumFileSize="2"
+                    change=".onProductImageSelected"
+                    typeMissmatch=".onImageTypeMismatch"
+                    fileSizeExceed=".onImageSizeExceeded"
+                    width="100%" />
+                <Text text="{i18n>productImageHint}" class="sapUiTinyMarginTop" />
+            </f:SimpleForm>
+        </content>
+        <beginButton>
+            <Button text="{i18n>upload}" type="Emphasized" press=".onUploadProductImage" />
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>cancel}" press=".onCancelImageUpload" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

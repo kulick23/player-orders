@@ -151,6 +151,14 @@ body > div,
   background: #f8f7ff;
 }
 
+.productIdentity {
+  gap: 0.75rem;
+}
+
+.productImage {
+  flex: 0 0 auto;
+}
+
 .ordersDetailActions {
   margin: 1.5rem 0;
   gap: 0.5rem;

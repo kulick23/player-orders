@@ -1,5 +1,13 @@
 import cds, { Request } from "@sap/cds";
 const { SELECT, UPDATE, INSERT } = cds.ql;
+
+const MAX_PRODUCT_IMAGE_SIZE = 2 * 1024 * 1024;
+const PRODUCT_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
+
 export default class PlayerOrderService extends cds.ApplicationService {
   async init() {
     const { Configuration, SalesOrders, SalesOrderItems, GameProducts } =
@@ -21,6 +29,7 @@ export default class PlayerOrderService extends cds.ApplicationService {
         canCancelOrder: isCustomer || isSalesAdmin,
         canCreateProduct: isSalesAdmin || isWarehouseManager,
         canReplenishStock: isSalesAdmin || isWarehouseManager,
+        canManageProductImage: isSalesAdmin || isWarehouseManager,
       };
     });
 
@@ -64,6 +73,42 @@ export default class PlayerOrderService extends cds.ApplicationService {
       await tx.run(
         UPDATE.entity("playerorders.GameProduct")
           .set({ stockQuantity: Number(product.stockQuantity) + quantity })
+          .where({ ID }),
+      );
+
+      return tx.run(
+        SELECT.one.from("playerorders.GameProduct").where({ ID }),
+      );
+    });
+
+    this.on("setImage", GameProducts, async (req) => {
+      const { ID } = req.params[0];
+      const imageType = String(req.data.imageType || "").toLowerCase();
+      const imageName = String(req.data.imageName || "").trim();
+      const image = Buffer.isBuffer(req.data.image)
+        ? req.data.image
+        : Buffer.from(String(req.data.image || ""), "base64");
+      const tx = cds.tx(req);
+
+      if (!PRODUCT_IMAGE_TYPES.has(imageType)) {
+        return req.reject(400, "Only JPEG, PNG, and WebP images are supported");
+      }
+
+      if (!image.length || image.length > MAX_PRODUCT_IMAGE_SIZE) {
+        return req.reject(400, "Product image must be between 1 byte and 2 MB");
+      }
+
+      const product = await tx.run(
+        SELECT.one.from("playerorders.GameProduct").columns("ID").where({ ID }),
+      );
+
+      if (!product) {
+        return req.reject(404, "Product not found");
+      }
+
+      await tx.run(
+        UPDATE.entity("playerorders.GameProduct")
+          .set({ image, imageType, imageName })
           .where({ ID }),
       );
 

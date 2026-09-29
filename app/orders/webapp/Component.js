@@ -21,7 +21,8 @@ sap.ui.define([
           canFulfillOrder: false,
           canCancelOrder: false,
           canCreateProduct: false,
-          canReplenishStock: false
+          canReplenishStock: false,
+          canManageProductImage: false
         },
         filters: {
           search: "",
@@ -49,7 +50,12 @@ sap.ui.define([
           price: 0,
           active: true,
           stockRelevant: true,
-          stockQuantity: 0
+          stockQuantity: 0,
+          imageName: ""
+        },
+        productImageUpload: {
+          productName: "",
+          imageName: ""
         },
         stockReplenishment: {
           productName: "",

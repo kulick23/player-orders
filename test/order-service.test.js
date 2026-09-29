@@ -109,6 +109,7 @@ describe("PlayerOrderService", () => {
         canCancelOrder: true,
         canCreateProduct: false,
         canReplenishStock: false,
+        canManageProductImage: false,
       });
     });
 
@@ -128,6 +129,7 @@ describe("PlayerOrderService", () => {
         canCancelOrder: true,
         canCreateProduct: true,
         canReplenishStock: true,
+        canManageProductImage: true,
       });
     });
 
@@ -147,6 +149,7 @@ describe("PlayerOrderService", () => {
         canCancelOrder: false,
         canCreateProduct: true,
         canReplenishStock: true,
+        canManageProductImage: true,
       });
     });
 
@@ -252,6 +255,53 @@ describe("PlayerOrderService", () => {
 
       expect(response.status).to.equal(200);
       expect(response.data.stockQuantity).to.equal(65);
+    });
+
+    it("allows a warehouse manager to upload a product image", async () => {
+      const image = Buffer.from("small test image").toString("base64");
+      const response = await POST(
+        productActionPath(SHIRT_PRODUCT_ID, "setImage"),
+        {
+          image,
+          imageType: "image/png",
+          imageName: "shirt.png",
+        },
+        options(WAREHOUSE),
+      );
+      const product = await GET(
+        `/orders/GameProducts(ID=${SHIRT_PRODUCT_ID})?$select=imageType,imageName`,
+        options(WAREHOUSE),
+      );
+      const media = await GET(
+        `/orders/GameProducts(ID=${SHIRT_PRODUCT_ID})/image`,
+        { ...options(WAREHOUSE), responseType: "text" },
+      );
+
+      expect(response.status).to.equal(200);
+      expect(product.data).to.include({
+        imageType: "image/png",
+        imageName: "shirt.png",
+      });
+      expect(media.status).to.equal(200);
+      expect(media.headers["content-type"]).to.equal("image/png");
+      expect(media.data).to.equal("small test image");
+    });
+
+    it("rejects an unsupported product image type", async () => {
+      const response = await POST(
+        productActionPath(SHIRT_PRODUCT_ID, "setImage"),
+        {
+          image: Buffer.from("not an image").toString("base64"),
+          imageType: "image/svg+xml",
+          imageName: "shirt.svg",
+        },
+        options(WAREHOUSE, true),
+      );
+
+      expect(response.status).to.equal(400);
+      expect(response.data.error.message).to.equal(
+        "Only JPEG, PNG, and WebP images are supported",
+      );
     });
 
     it("rejects an invalid replenishment quantity", async () => {
