@@ -1,17 +1,17 @@
 sap.ui.define([
   "./BaseController",
   "../model/formatter",
+  "../model/models",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator",
-  "sap/ui/model/Sorter",
-  "sap/m/MessageToast"
+  "sap/ui/model/Sorter"
 ], function (
   BaseController,
   formatter,
+  models,
   Filter,
   FilterOperator,
-  Sorter,
-  MessageToast
+  Sorter
 ) {
   "use strict";
 
@@ -98,11 +98,8 @@ sap.ui.define([
     },
 
     onRefresh: function () {
-      const oBinding = this.byId("ordersTable").getBinding("items");
-      if (oBinding) {
-        oBinding.refresh();
-      }
-      MessageToast.show(this.getResourceBundle().getText("ordersRefreshed"));
+      this.refreshItems("ordersTable");
+      this.showToast("ordersRefreshed");
     },
 
     onItemPress: function (oEvent) {
@@ -113,19 +110,12 @@ sap.ui.define([
     },
 
     onOpenCreate: async function () {
-      this.getUIModel().setProperty("/newOrder", {
-        customerID: "",
-        discountAmount: 0,
-        note: "",
-        items: [{ productID: "", quantity: 1 }]
-      });
-
-      if (!this.createDialog) {
-        this.createDialog = await this.loadFragment({
-          name: "playerorders.orders.fragment.CreateOrderDialog"
-        });
-      }
-      this.createDialog.open();
+      this.getUIModel().setProperty("/newOrder", models.createNewOrder());
+      const oDialog = await this.getOrLoadDialog(
+        "createDialog",
+        "playerorders.orders.fragment.CreateOrderDialog"
+      );
+      oDialog.open();
     },
 
     onAddOrderItem: function () {
@@ -153,14 +143,11 @@ sap.ui.define([
       );
 
       if (!sCustomerID || bInvalidItems) {
-        this.showError(new Error(
-          this.getResourceBundle().getText("completeRequiredFields")
-        ));
+        this.showError(new Error(this.getText("completeRequiredFields")));
         return;
       }
 
-      this.setBusy(true);
-      try {
+      await this.runBusy(async () => {
         const oListBinding = this.getModel().bindList("/SalesOrders");
         const oDraftContext = oListBinding.create({
           customer_ID: sCustomerID,
@@ -178,27 +165,19 @@ sap.ui.define([
           oDraftContext
         );
 
-        this.createDialog.close();
+        this.closeDialog("createDialog");
         this.getModel().refresh();
-        MessageToast.show(this.getResourceBundle().getText("orderCreated"));
+        this.showToast("orderCreated");
 
         const sOrderID = oActiveContext?.getProperty("ID");
         if (sOrderID) {
           this.getRouter().navTo("orderDetails", { orderId: sOrderID });
         }
-      } catch (oError) {
-        this.showError(oError);
-      } finally {
-        this.setBusy(false);
-      }
+      });
     },
 
     onCancelCreate: function () {
-      this.createDialog.close();
-    },
-
-    getResourceBundle: function () {
-      return this.getModel("i18n").getResourceBundle();
+      this.closeDialog("createDialog");
     }
   });
 });

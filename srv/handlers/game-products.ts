@@ -1,13 +1,13 @@
 import cds, { Request } from "@sap/cds";
-
-const { SELECT, UPDATE } = cds.ql;
-
-const MAX_PRODUCT_IMAGE_SIZE = 2 * 1024 * 1024;
-const PRODUCT_IMAGE_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
+import {
+  MAX_PRODUCT_IMAGE_SIZE,
+  PRODUCT_IMAGE_TYPES,
+} from "../constants/product-image.js";
+import {
+  findGameProduct,
+  findGameProductID,
+  updateGameProduct,
+} from "../repositories/game-products.js";
 
 export function validateGameProduct(req: Request) {
   if (Object.prototype.hasOwnProperty.call(req.data, "price")) {
@@ -34,9 +34,7 @@ export async function replenishStock(req: Request) {
     return req.reject(400, "Replenishment quantity must be a positive integer");
   }
 
-  const product = await tx.run(
-    SELECT.one.from("playerorders.GameProduct").where({ ID }),
-  );
+  const product = await findGameProduct(tx, ID);
 
   if (!product) {
     return req.reject(404, "Product not found");
@@ -46,13 +44,10 @@ export async function replenishStock(req: Request) {
     return req.reject(400, "Stock is not tracked for this product");
   }
 
-  await tx.run(
-    UPDATE.entity("playerorders.GameProduct")
-      .set({ stockQuantity: Number(product.stockQuantity) + quantity })
-      .where({ ID }),
-  );
-
-  return tx.run(SELECT.one.from("playerorders.GameProduct").where({ ID }));
+  await updateGameProduct(tx, ID, {
+    stockQuantity: Number(product.stockQuantity) + quantity,
+  });
+  return findGameProduct(tx, ID);
 }
 
 export async function setProductImage(req: Request) {
@@ -72,19 +67,12 @@ export async function setProductImage(req: Request) {
     return req.reject(400, "Product image must be between 1 byte and 2 MB");
   }
 
-  const product = await tx.run(
-    SELECT.one.from("playerorders.GameProduct").columns("ID").where({ ID }),
-  );
+  const product = await findGameProductID(tx, ID);
 
   if (!product) {
     return req.reject(404, "Product not found");
   }
 
-  await tx.run(
-    UPDATE.entity("playerorders.GameProduct")
-      .set({ image, imageType, imageName })
-      .where({ ID }),
-  );
-
-  return tx.run(SELECT.one.from("playerorders.GameProduct").where({ ID }));
+  await updateGameProduct(tx, ID, { image, imageType, imageName });
+  return findGameProduct(tx, ID);
 }

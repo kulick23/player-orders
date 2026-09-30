@@ -1,8 +1,9 @@
 sap.ui.define([
   "sap/ui/core/mvc/Controller",
   "sap/ui/core/UIComponent",
-  "sap/m/MessageBox"
-], function (Controller, UIComponent, MessageBox) {
+  "sap/m/MessageBox",
+  "sap/m/MessageToast"
+], function (Controller, UIComponent, MessageBox, MessageToast) {
   "use strict";
 
   return Controller.extend("playerorders.orders.controller.BaseController", {
@@ -20,6 +21,44 @@ sap.ui.define([
 
     setBusy: function (bBusy) {
       this.getUIModel().setProperty("/busy", bBusy);
+    },
+
+    getText: function (sKey, aParameters) {
+      return this.getModel("i18n").getResourceBundle().getText(
+        sKey,
+        aParameters
+      );
+    },
+
+    showToast: function (sTextKey) {
+      MessageToast.show(this.getText(sTextKey));
+    },
+
+    getOrLoadDialog: async function (sPropertyName, sFragmentName) {
+      if (!this[sPropertyName]) {
+        this[sPropertyName] = await this.loadFragment({ name: sFragmentName });
+      }
+      return this[sPropertyName];
+    },
+
+    closeDialog: function (sPropertyName) {
+      this[sPropertyName]?.close();
+    },
+
+    refreshItems: function (sTableID) {
+      this.byId(sTableID).getBinding("items")?.refresh();
+    },
+
+    runBusy: async function (fnTask) {
+      this.setBusy(true);
+      try {
+        return await fnTask();
+      } catch (oError) {
+        this.showError(oError);
+        return null;
+      } finally {
+        this.setBusy(false);
+      }
     },
 
     showError: function (oError) {

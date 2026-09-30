@@ -1,22 +1,23 @@
 import cds, { Request } from "@sap/cds";
+import type { SalesOrderItem } from "#cds-models/playerorders";
+import { calculateLineAmount } from "../domain/order-totals.js";
 
 const { SELECT } = cds.ql;
 
 export function createCalculateItemAmountsHandler(
-  GameProducts: any,
-  SalesOrderItems: any,
+  GameProducts: cds.entity,
+  SalesOrderItemDrafts: cds.entity,
 ) {
   return async function calculateItemAmounts(req: Request) {
     const tx = cds.tx(req);
-    let currentItem: any = {};
+    let currentItem: Partial<SalesOrderItem> = {};
     const itemKey = req.params?.[req.params.length - 1];
     const itemID = req.data.ID ?? itemKey?.ID;
 
     if (itemID) {
-      currentItem =
-        (await tx.run(
-          SELECT.one.from(SalesOrderItems.drafts).where({ ID: itemID }),
-        )) ?? {};
+      currentItem = ((await tx.run(
+          SELECT.one.from(SalesOrderItemDrafts).where({ ID: itemID }),
+        )) ?? {}) as Partial<SalesOrderItem>;
     }
 
     const productID = req.data.product_ID ?? currentItem.product_ID;
@@ -45,6 +46,6 @@ export function createCalculateItemAmountsHandler(
     const unitPrice = Number(product.price);
     req.data.quantity = quantity;
     req.data.unitPrice = unitPrice;
-    req.data.lineAmount = Number((unitPrice * quantity).toFixed(2));
+    req.data.lineAmount = calculateLineAmount(unitPrice, quantity);
   };
 }

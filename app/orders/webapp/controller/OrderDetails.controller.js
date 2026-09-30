@@ -1,9 +1,8 @@
 sap.ui.define([
   "./BaseController",
   "../model/formatter",
-  "sap/m/MessageBox",
-  "sap/m/MessageToast"
-], function (BaseController, formatter, MessageBox, MessageToast) {
+  "sap/m/MessageBox"
+], function (BaseController, formatter, MessageBox) {
   "use strict";
 
   return BaseController.extend("playerorders.orders.controller.OrderDetails", {
@@ -61,26 +60,27 @@ sap.ui.define([
 
     onOpenPayment: async function () {
       this.getUIModel().setProperty("/paymentProvider", "STRIPE");
-      if (!this.paymentDialog) {
-        this.paymentDialog = await this.loadFragment({
-          name: "playerorders.orders.fragment.PaymentDialog"
-        });
-      }
-      this.paymentDialog.open();
+      const oDialog = await this.getOrLoadDialog(
+        "paymentDialog",
+        "playerorders.orders.fragment.PaymentDialog"
+      );
+      oDialog.open();
     },
 
     onConfirmPayment: async function () {
       const sProvider = this.getUIModel().getProperty("/paymentProvider");
-      await this.runAction(
+      const bSucceeded = await this.runAction(
         "markAsPaid",
         { paymentProvider: sProvider },
         "orderPaid"
       );
-      this.paymentDialog.close();
+      if (bSucceeded) {
+        this.closeDialog("paymentDialog");
+      }
     },
 
     onClosePayment: function () {
-      this.paymentDialog.close();
+      this.closeDialog("paymentDialog");
     },
 
     onFulfillOrder: async function () {
@@ -92,12 +92,11 @@ sap.ui.define([
 
     onOpenCancel: async function () {
       this.getUIModel().setProperty("/cancellationReason", "");
-      if (!this.cancelDialog) {
-        this.cancelDialog = await this.loadFragment({
-          name: "playerorders.orders.fragment.CancelOrderDialog"
-        });
-      }
-      this.cancelDialog.open();
+      const oDialog = await this.getOrLoadDialog(
+        "cancelDialog",
+        "playerorders.orders.fragment.CancelOrderDialog"
+      );
+      oDialog.open();
     },
 
     onConfirmCancel: async function () {
@@ -108,16 +107,18 @@ sap.ui.define([
         this.showError(new Error(this.getText("cancellationReasonRequired")));
         return;
       }
-      await this.runAction(
+      const bSucceeded = await this.runAction(
         "cancelOrder",
         { reason: sReason },
         "orderCancelled"
       );
-      this.cancelDialog.close();
+      if (bSucceeded) {
+        this.closeDialog("cancelDialog");
+      }
     },
 
     onCloseCancel: function () {
-      this.cancelDialog.close();
+      this.closeDialog("cancelDialog");
     },
 
     onOpenEdit: async function () {
@@ -127,20 +128,17 @@ sap.ui.define([
         discountAmount: Number(oContext.getProperty("discountAmount") || 0),
         note: oContext.getProperty("note") || ""
       });
-      if (!this.editDialog) {
-        this.editDialog = await this.loadFragment({
-          name: "playerorders.orders.fragment.EditOrderDialog"
-        });
-      }
-      this.editDialog.open();
+      const oDialog = await this.getOrLoadDialog(
+        "editDialog",
+        "playerorders.orders.fragment.EditOrderDialog"
+      );
+      oDialog.open();
     },
 
     onSaveEdit: async function () {
       const oActiveContext = this.getView().getBindingContext();
       const oEditData = this.getUIModel().getProperty("/editOrder");
-      this.setBusy(true);
-
-      try {
+      await this.runBusy(async () => {
         const oDraftContext = await this.executeAction(
           "draftEdit",
           oActiveContext,
@@ -157,18 +155,14 @@ sap.ui.define([
         ]);
 
         await this.executeAction("draftActivate", oDraftContext);
-        this.editDialog.close();
+        this.closeDialog("editDialog");
         this.getModel().refresh();
-        MessageToast.show(this.getText("orderUpdated"));
-      } catch (oError) {
-        this.showError(oError);
-      } finally {
-        this.setBusy(false);
-      }
+        this.showToast("orderUpdated");
+      });
     },
 
     onCloseEdit: function () {
-      this.editDialog.close();
+      this.closeDialog("editDialog");
     },
 
     onDeleteOrder: async function () {
@@ -177,33 +171,25 @@ sap.ui.define([
         return;
       }
 
-      this.setBusy(true);
-      try {
+      await this.runBusy(async () => {
         await this.getView().getBindingContext().delete();
-        MessageToast.show(this.getText("orderDeleted"));
+        this.showToast("orderDeleted");
         this.getRouter().navTo("orders", {}, true);
-      } catch (oError) {
-        this.showError(oError);
-      } finally {
-        this.setBusy(false);
-      }
+      });
     },
 
     runAction: async function (sAction, mParameters, sSuccessText) {
-      this.setBusy(true);
-      try {
+      const bSucceeded = await this.runBusy(async () => {
         await this.executeAction(
           sAction,
           this.getView().getBindingContext(),
           mParameters
         );
         this.getModel().refresh();
-        MessageToast.show(this.getText(sSuccessText));
-      } catch (oError) {
-        this.showError(oError);
-      } finally {
-        this.setBusy(false);
-      }
+        this.showToast(sSuccessText);
+        return true;
+      });
+      return bSucceeded === true;
     },
 
     confirm: function (sTextKey) {
@@ -212,10 +198,6 @@ sap.ui.define([
           onClose: (sAction) => resolve(sAction === MessageBox.Action.OK)
         });
       });
-    },
-
-    getText: function (sKey) {
-      return this.getModel("i18n").getResourceBundle().getText(sKey);
     }
   });
 });

@@ -1,13 +1,11 @@
 sap.ui.define([
   "./BaseController",
+  "../model/models",
+  "../model/productImage",
   "sap/ui/model/Filter",
-  "sap/ui/model/FilterOperator",
-  "sap/m/MessageToast"
-], function (BaseController, Filter, FilterOperator, MessageToast) {
+  "sap/ui/model/FilterOperator"
+], function (BaseController, models, productImage, Filter, FilterOperator) {
   "use strict";
-
-  const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
-  const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
   return BaseController.extend("playerorders.orders.controller.Products", {
     onInit: function () {
@@ -18,15 +16,11 @@ sap.ui.define([
     },
 
     onRouteMatched: function () {
-      const oBinding = this.byId("productsTable").getBinding("items");
-      if (oBinding) {
-        oBinding.refresh();
-      }
+      this.refreshItems("productsTable");
     },
 
     onSearch: function () {
       const sQuery = this.getUIModel().getProperty("/productSearch").trim();
-      const oBinding = this.byId("productsTable").getBinding("items");
       const aFilters = sQuery ? [new Filter({
         filters: [
           new Filter("name", FilterOperator.Contains, sQuery),
@@ -36,34 +30,24 @@ sap.ui.define([
         and: false
       })] : [];
 
-      oBinding.filter(aFilters);
+      this.byId("productsTable").getBinding("items").filter(aFilters);
     },
 
     onRefresh: function () {
-      this.byId("productsTable").getBinding("items").refresh();
-      MessageToast.show(this.getResourceBundle().getText("productsRefreshed"));
+      this.refreshItems("productsTable");
+      this.showToast("productsRefreshed");
     },
 
     onOpenCreate: async function () {
-      this.getUIModel().setProperty("/newProduct", {
-        name: "",
-        description: "",
-        type: "",
-        price: 0,
-        active: true,
-        stockRelevant: true,
-        stockQuantity: 0,
-        imageName: ""
-      });
+      this.getUIModel().setProperty("/newProduct", models.createNewProduct());
       this.newProductImageFile = null;
 
-      if (!this.createProductDialog) {
-        this.createProductDialog = await this.loadFragment({
-          name: "playerorders.orders.fragment.CreateProductDialog"
-        });
-      }
+      const oDialog = await this.getOrLoadDialog(
+        "createProductDialog",
+        "playerorders.orders.fragment.CreateProductDialog"
+      );
       this.byId("createProductImageUploader").clear();
-      this.createProductDialog.open();
+      oDialog.open();
     },
 
     onCreateImageSelected: function (oEvent) {
@@ -80,16 +64,13 @@ sap.ui.define([
       const nPrice = Number(oProduct.price);
 
       if (!sName || !Number.isFinite(nPrice) || nPrice < 0) {
-        this.showError(new Error(
-          this.getResourceBundle().getText("completeProductFields")
-        ));
+        this.showError(new Error(this.getText("completeProductFields")));
         return;
       }
 
-      this.setBusy(true);
-      try {
+      await this.runBusy(async () => {
         const oImage = this.newProductImageFile
-          ? await this.readProductImage(this.newProductImageFile)
+          ? await productImage.read(this.newProductImageFile, this.getText.bind(this))
           : null;
         const oContext = this.getModel().bindList("/GameProducts").create({
           name: sName,
@@ -107,18 +88,14 @@ sap.ui.define([
         if (oImage) {
           await this.executeAction("setImage", oContext, oImage);
         }
-        this.createProductDialog.close();
-        this.byId("productsTable").getBinding("items").refresh();
-        MessageToast.show(this.getResourceBundle().getText("productCreated"));
-      } catch (oError) {
-        this.showError(oError);
-      } finally {
-        this.setBusy(false);
-      }
+        this.closeDialog("createProductDialog");
+        this.refreshItems("productsTable");
+        this.showToast("productCreated");
+      });
     },
 
     onCancelCreate: function () {
-      this.createProductDialog.close();
+      this.closeDialog("createProductDialog");
     },
 
     onOpenImageUpload: async function (oEvent) {
@@ -129,13 +106,12 @@ sap.ui.define([
         imageName: ""
       });
 
-      if (!this.productImageDialog) {
-        this.productImageDialog = await this.loadFragment({
-          name: "playerorders.orders.fragment.UploadProductImageDialog"
-        });
-      }
+      const oDialog = await this.getOrLoadDialog(
+        "productImageDialog",
+        "playerorders.orders.fragment.UploadProductImageDialog"
+      );
       this.byId("productImageUploader").clear();
-      this.productImageDialog.open();
+      oDialog.open();
     },
 
     onProductImageSelected: function (oEvent) {
@@ -148,76 +124,36 @@ sap.ui.define([
 
     onUploadProductImage: async function () {
       if (!this.productImageFile) {
-        this.showError(new Error(
-          this.getResourceBundle().getText("selectProductImage")
-        ));
+        this.showError(new Error(this.getText("selectProductImage")));
         return;
       }
 
-      this.setBusy(true);
-      try {
-        const oImage = await this.readProductImage(this.productImageFile);
+      await this.runBusy(async () => {
+        const oImage = await productImage.read(
+          this.productImageFile,
+          this.getText.bind(this)
+        );
         await this.executeAction("setImage", this.imageProductContext, oImage);
-        this.productImageDialog.close();
-        this.byId("productsTable").getBinding("items").refresh();
-        MessageToast.show(this.getResourceBundle().getText("productImageUploaded"));
-      } catch (oError) {
-        this.showError(oError);
-      } finally {
-        this.setBusy(false);
-      }
-    },
-
-    onCancelImageUpload: function () {
-      this.productImageDialog.close();
-    },
-
-    onImageTypeMismatch: function () {
-      this.showError(new Error(
-        this.getResourceBundle().getText("invalidImageType")
-      ));
-    },
-
-    onImageSizeExceeded: function () {
-      this.showError(new Error(
-        this.getResourceBundle().getText("imageTooLarge")
-      ));
-    },
-
-    readProductImage: function (oFile) {
-      if (!IMAGE_TYPES.includes(oFile.type)) {
-        return Promise.reject(new Error(
-          this.getResourceBundle().getText("invalidImageType")
-        ));
-      }
-
-      if (oFile.size > MAX_IMAGE_SIZE) {
-        return Promise.reject(new Error(
-          this.getResourceBundle().getText("imageTooLarge")
-        ));
-      }
-
-      return new Promise((resolve, reject) => {
-        const oReader = new FileReader();
-        oReader.onload = () => resolve({
-          image: String(oReader.result).split(",")[1],
-          imageType: oFile.type,
-          imageName: oFile.name
-        });
-        oReader.onerror = () => reject(new Error(
-          this.getResourceBundle().getText("imageReadFailed")
-        ));
-        oReader.readAsDataURL(oFile);
+        this.closeDialog("productImageDialog");
+        this.refreshItems("productsTable");
+        this.showToast("productImageUploaded");
       });
     },
 
-    formatProductImageUrl: function (sID, sImageType, sModifiedAt) {
-      if (!sID || !sImageType) {
-        return "";
-      }
+    onCancelImageUpload: function () {
+      this.closeDialog("productImageDialog");
+    },
 
-      const sVersion = encodeURIComponent(sModifiedAt || "");
-      return `/orders/GameProducts(ID=${sID})/image?v=${sVersion}`;
+    onImageTypeMismatch: function () {
+      this.showError(new Error(this.getText("invalidImageType")));
+    },
+
+    onImageSizeExceeded: function () {
+      this.showError(new Error(this.getText("imageTooLarge")));
+    },
+
+    formatProductImageUrl: function (sID, sImageType, sModifiedAt) {
+      return productImage.formatUrl(sID, sImageType, sModifiedAt);
     },
 
     onOpenReplenish: async function (oEvent) {
@@ -228,12 +164,11 @@ sap.ui.define([
         quantity: 1
       });
 
-      if (!this.replenishDialog) {
-        this.replenishDialog = await this.loadFragment({
-          name: "playerorders.orders.fragment.ReplenishStockDialog"
-        });
-      }
-      this.replenishDialog.open();
+      const oDialog = await this.getOrLoadDialog(
+        "replenishDialog",
+        "playerorders.orders.fragment.ReplenishStockDialog"
+      );
+      oDialog.open();
     },
 
     onReplenishStock: async function () {
@@ -242,35 +177,24 @@ sap.ui.define([
       );
 
       if (!Number.isInteger(nQuantity) || nQuantity <= 0) {
-        this.showError(new Error(
-          this.getResourceBundle().getText("positiveStockRequired")
-        ));
+        this.showError(new Error(this.getText("positiveStockRequired")));
         return;
       }
 
-      this.setBusy(true);
-      try {
+      await this.runBusy(async () => {
         await this.executeAction(
           "replenishStock",
           this.replenishContext,
           { quantity: nQuantity }
         );
-        this.replenishDialog.close();
-        this.byId("productsTable").getBinding("items").refresh();
-        MessageToast.show(this.getResourceBundle().getText("stockReplenished"));
-      } catch (oError) {
-        this.showError(oError);
-      } finally {
-        this.setBusy(false);
-      }
+        this.closeDialog("replenishDialog");
+        this.refreshItems("productsTable");
+        this.showToast("stockReplenished");
+      });
     },
 
     onCancelReplenish: function () {
-      this.replenishDialog.close();
-    },
-
-    getResourceBundle: function () {
-      return this.getModel("i18n").getResourceBundle();
+      this.closeDialog("replenishDialog");
     }
   });
 });

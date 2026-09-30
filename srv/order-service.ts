@@ -8,13 +8,15 @@ import {
 import { createCalculateItemAmountsHandler } from "./handlers/sales-order-items.js";
 import {
   cancelOrder,
+  submitOrder,
+} from "./handlers/sales-order-lifecycle.js";
+import {
   createPrepareSalesOrderHandler,
-  fulfillOrder,
-  markOrderAsPaid,
   prepareSalesOrderDraftSave,
   protectCustomerDraftFields,
-  submitOrder,
-} from "./handlers/sales-orders.js";
+} from "./handlers/sales-order-drafts.js";
+import { fulfillOrder } from "./handlers/sales-order-fulfillment.js";
+import { markOrderAsPaid } from "./handlers/sales-order-payment.js";
 
 export default class PlayerOrderService extends cds.ApplicationService {
   async init() {
@@ -22,7 +24,7 @@ export default class PlayerOrderService extends cds.ApplicationService {
       this.entities;
     const calculateItemAmounts = createCalculateItemAmountsHandler(
       GameProducts,
-      SalesOrderItems,
+      SalesOrderItems.drafts!,
     );
 
     this.on("READ", Configuration, readConfiguration);
