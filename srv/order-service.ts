@@ -5,6 +5,10 @@ import {
   setProductImage,
   validateGameProduct,
 } from "./handlers/game-products.js";
+import {
+  enrichProductStockStatus,
+  getInventorySummary,
+} from "./handlers/product-queries.js";
 import { createCalculateItemAmountsHandler } from "./handlers/sales-order-items.js";
 import {
   cancelOrder,
@@ -28,8 +32,10 @@ export default class PlayerOrderService extends cds.ApplicationService {
     );
 
     this.on("READ", Configuration, readConfiguration);
+    this.on("getInventorySummary", getInventorySummary);
 
     this.before(["CREATE", "UPDATE"], GameProducts, validateGameProduct);
+    this.after("READ", GameProducts, enrichProductStockStatus);
     this.on("replenishStock", GameProducts, replenishStock);
     this.on("setImage", GameProducts, setProductImage);
 

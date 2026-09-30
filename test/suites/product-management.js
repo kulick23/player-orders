@@ -11,6 +11,50 @@ const {
 } = require("../support/order-service");
 
 describe("product management", () => {
+  it("adds a calculated stock status after reading products", async () => {
+    const response = await GET(
+      "/orders/GameProducts?$select=name,active,stockRelevant,stockQuantity,stockStatus",
+      options(WAREHOUSE),
+    );
+    const shirt = response.data.value.find(
+      (product) => product.name === "Game Logo T-Shirt",
+    );
+    const inactiveProduct = response.data.value.find(
+      (product) => product.name === "Founder Avatar Frame",
+    );
+
+    expect(shirt.stockStatus).to.equal("IN_STOCK");
+    expect(inactiveProduct.stockStatus).to.equal("INACTIVE");
+  });
+
+  it("returns inventory totals through an OData function", async () => {
+    const response = await GET(
+      "/orders/getInventorySummary()",
+      options(WAREHOUSE),
+    );
+
+    expect(response.status).to.equal(200);
+    expect(response.data).to.deep.include({
+      totalProducts: 8,
+      activeProducts: 7,
+      trackedProducts: 1,
+      outOfStockProducts: 0,
+      lowStockProducts: 0,
+      totalStockUnits: 50,
+    });
+  });
+
+  it("navigates the many-to-many relation through order items", async () => {
+    const response = await GET(
+      `/orders/GameProducts(ID=${SHIRT_PRODUCT_ID})/orderItems?$select=order_ID,product_ID`,
+      options(WAREHOUSE),
+    );
+
+    expect(response.status).to.equal(200);
+    expect(response.data.value).to.have.length(1);
+    expect(response.data.value[0].product_ID).to.equal(SHIRT_PRODUCT_ID);
+  });
+
   it("forbids a customer from changing product stock", async () => {
     const response = await PATCH(
       `/orders/GameProducts(ID=${SHIRT_PRODUCT_ID})`,

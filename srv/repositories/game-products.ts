@@ -16,6 +16,16 @@ export function findGameProductID(tx: Transaction, ID: string) {
   ) as Promise<Pick<GameProduct, "ID"> | undefined>;
 }
 
+export function listGameProductStock(tx: Transaction) {
+  return tx.run(
+    SELECT.from(GAME_PRODUCT).columns(
+      "active",
+      "stockRelevant",
+      "stockQuantity",
+    ),
+  ) as Promise<GameProduct[]>;
+}
+
 export async function updateGameProduct(
   tx: Transaction,
   ID: string,

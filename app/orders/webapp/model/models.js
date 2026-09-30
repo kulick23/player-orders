@@ -59,6 +59,14 @@ sap.ui.define([
       cancellationReason: "",
       selectedNavigation: "orders",
       productSearch: "",
+      inventorySummary: {
+        totalProducts: 0,
+        activeProducts: 0,
+        trackedProducts: 0,
+        outOfStockProducts: 0,
+        lowStockProducts: 0,
+        totalStockUnits: 0
+      },
       newProduct: createNewProduct(),
       productImageUpload: { productName: "", imageName: "" },
       stockReplenishment: {

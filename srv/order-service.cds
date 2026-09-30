@@ -4,6 +4,18 @@ using {playerorders as db} from '../db/schema';
 @requires: 'authenticated-user'
 service PlayerOrderService {
 
+    type InventorySummary {
+        totalProducts      : Integer;
+        activeProducts     : Integer;
+        trackedProducts    : Integer;
+        outOfStockProducts : Integer;
+        lowStockProducts   : Integer;
+        totalStockUnits    : Integer;
+    }
+
+    @requires: ['Customer', 'SalesAdmin', 'WarehouseManager']
+    function getInventorySummary() returns InventorySummary;
+
     @odata.singleton
     @cds.persistence.skip
     entity Configuration {
@@ -56,7 +68,10 @@ service PlayerOrderService {
         { grant: '*',                to: 'SalesAdmin' },
         { grant: ['READ', 'CREATE', 'UPDATE', 'replenishStock', 'setImage'], to: 'WarehouseManager' }
     ]
-    entity GameProducts as projection on db.GameProduct
+    entity GameProducts as projection on db.GameProduct {
+        *,
+        virtual null as stockStatus : String(20)
+    }
         actions {
             action replenishStock(quantity: Integer) returns GameProducts;
             action setImage(

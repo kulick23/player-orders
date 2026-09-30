@@ -1,13 +1,22 @@
 sap.ui.define([
   "./BaseController",
+  "../model/formatter",
   "../model/models",
   "../model/productImage",
   "sap/ui/model/Filter",
   "sap/ui/model/FilterOperator"
-], function (BaseController, models, productImage, Filter, FilterOperator) {
+], function (
+  BaseController,
+  formatter,
+  models,
+  productImage,
+  Filter,
+  FilterOperator
+) {
   "use strict";
 
   return BaseController.extend("playerorders.orders.controller.Products", {
+    formatter: formatter,
     onInit: function () {
       this.getRouter().getRoute("products").attachPatternMatched(
         this.onRouteMatched,
@@ -17,6 +26,20 @@ sap.ui.define([
 
     onRouteMatched: function () {
       this.refreshItems("productsTable");
+      this.loadInventorySummary();
+    },
+
+    loadInventorySummary: async function () {
+      try {
+        const oOperation = this.getModel().bindContext(
+          "/getInventorySummary(...)"
+        );
+        await oOperation.execute();
+        const oSummary = await oOperation.getBoundContext().requestObject();
+        this.getUIModel().setProperty("/inventorySummary", oSummary);
+      } catch (oError) {
+        this.showError(oError);
+      }
     },
 
     onSearch: function () {
@@ -35,6 +58,7 @@ sap.ui.define([
 
     onRefresh: function () {
       this.refreshItems("productsTable");
+      this.loadInventorySummary();
       this.showToast("productsRefreshed");
     },
 
@@ -90,6 +114,7 @@ sap.ui.define([
         }
         this.closeDialog("createProductDialog");
         this.refreshItems("productsTable");
+        await this.loadInventorySummary();
         this.showToast("productCreated");
       });
     },
@@ -156,6 +181,17 @@ sap.ui.define([
       return productImage.formatUrl(sID, sImageType, sModifiedAt);
     },
 
+    formatStockStatusText: function (sStatus) {
+      const mTextKeys = {
+        IN_STOCK: "stockStatusInStock",
+        LOW_STOCK: "stockStatusLow",
+        OUT_OF_STOCK: "stockStatusOut",
+        NOT_TRACKED: "stockStatusNotTracked",
+        INACTIVE: "stockStatusInactive"
+      };
+      return this.getText(mTextKeys[sStatus] || "stockStatusUnknown");
+    },
+
     onOpenReplenish: async function (oEvent) {
       this.replenishContext = oEvent.getSource().getBindingContext();
       this.getUIModel().setProperty("/stockReplenishment", {
@@ -189,6 +225,7 @@ sap.ui.define([
         );
         this.closeDialog("replenishDialog");
         this.refreshItems("productsTable");
+        await this.loadInventorySummary();
         this.showToast("stockReplenished");
       });
     },

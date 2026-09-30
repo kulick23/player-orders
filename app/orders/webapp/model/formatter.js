@@ -47,6 +47,15 @@ sap.ui.define([], function () {
 
     paymentMethod: function (sPaymentMethod) {
       return sPaymentMethod || "-";
+    },
+
+    stockState: function (sStatus) {
+      return {
+        IN_STOCK: "Success",
+        LOW_STOCK: "Warning",
+        OUT_OF_STOCK: "Error",
+        INACTIVE: "Error"
+      }[sStatus] || "None";
     }
   };
 });

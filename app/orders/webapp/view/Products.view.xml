@@ -8,6 +8,33 @@
                 <Title text="{i18n>productsPageTitle}" level="H1" class="ordersHeroTitle" />
                 <Text text="{i18n>productsPageSubtitle}" class="ordersSubtitle" />
 
+                <FlexBox wrap="Wrap" class="inventorySummary">
+                    <VBox class="inventorySummaryItem">
+                        <ObjectNumber number="{ui>/inventorySummary/totalProducts}" />
+                        <Text text="{i18n>totalProducts}" />
+                    </VBox>
+                    <VBox class="inventorySummaryItem">
+                        <ObjectNumber number="{ui>/inventorySummary/activeProducts}" state="Success" />
+                        <Text text="{i18n>activeProducts}" />
+                    </VBox>
+                    <VBox class="inventorySummaryItem">
+                        <ObjectNumber number="{ui>/inventorySummary/trackedProducts}" />
+                        <Text text="{i18n>trackedProducts}" />
+                    </VBox>
+                    <VBox class="inventorySummaryItem">
+                        <ObjectNumber number="{ui>/inventorySummary/totalStockUnits}" />
+                        <Text text="{i18n>totalStockUnits}" />
+                    </VBox>
+                    <VBox class="inventorySummaryItem">
+                        <ObjectNumber number="{ui>/inventorySummary/lowStockProducts}" state="Warning" />
+                        <Text text="{i18n>lowStockProducts}" />
+                    </VBox>
+                    <VBox class="inventorySummaryItem">
+                        <ObjectNumber number="{ui>/inventorySummary/outOfStockProducts}" state="Error" />
+                        <Text text="{i18n>outOfStockProducts}" />
+                    </VBox>
+                </FlexBox>
+
                 <FlexBox wrap="Wrap" alignItems="Center" class="ordersPrimaryActions">
                     <SearchField
                         value="{ui>/productSearch}"
@@ -68,8 +95,7 @@
                                         <Text text="—" visible="{= !${stockRelevant} }" />
                                     </HBox>
                                     <VBox>
-                                        <ObjectStatus text="{i18n>active}" state="Success" visible="{active}" />
-                                        <ObjectStatus text="{i18n>inactive}" state="Error" visible="{= !${active} }" />
+                                        <ObjectStatus text="{path: 'stockStatus', formatter: '.formatStockStatusText'}" state="{path: 'stockStatus', formatter: '.formatter.stockState'}" />
                                     </VBox>
                                     <HBox justifyContent="End">
                                         <Button

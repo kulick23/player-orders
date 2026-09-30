@@ -26,6 +26,8 @@ entity GameProduct : cuid, managed {
                     @Core.ContentDisposition.Type: 'inline';
   imageType     : String(100) @Core.IsMediaType;
   imageName     : String(255);
+  orderItems    : Association to many SalesOrderItem
+                    on orderItems.product = $self;
 }
 
 entity OrderStatus {
