@@ -16,6 +16,9 @@
   },
   "dependencies": {
     "@cap-js/hana": "^2",
+    "@sap-cloud-sdk/connectivity": "^4.9.1",
+    "@sap-cloud-sdk/http-client": "^4.9.1",
+    "@sap-cloud-sdk/resilience": "^4.9.1",
     "@sap/cds": "^9.9.3",
     "@sap/xssec": "^4"
   },
@@ -31,6 +34,7 @@
   ],
   "scripts": {
     "start": "cds-serve",
+    "watch-integrated": "cds watch --profile integration --port 4005 --open playerorders.orders/index.html?sap-ui-xx-viewCache=false --livereload false",
     "watch-orders": "cds watch --open playerorders.orders/index.html?sap-ui-xx-viewCache=false --livereload false",
     "test": "CDS_TYPESCRIPT=true CDS_PLUGIN_UI5_ACTIVE=false node --import tsx --test --test-force-exit test/*.test.js"
   },
@@ -64,11 +68,34 @@
                 "WarehouseManager"
               ]
             },
+            "integration": {
+              "password": "integration",
+              "roles": [
+                "system-user"
+              ]
+            },
             "*": false
           }
         },
         "[production]": {
           "kind": "xsuaa"
+        }
+      },
+      "PlayerIntegrationService": {
+        "kind": "odata-v4",
+        "model": "srv/external/player-integration-service",
+        "[integration]": {
+          "credentials": {
+            "url": "http://localhost:4004/integration/players",
+            "authentication": "BasicAuthentication",
+            "username": "integration",
+            "password": "integration"
+          }
+        },
+        "[production]": {
+          "credentials": {
+            "destination": "player-crm-api"
+          }
         }
       },
       "[production]": {

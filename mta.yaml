@@ -27,6 +27,7 @@ modules:
     requires:
       - name: player-orders-auth
       - name: player-orders-db
+      - name: player-orders-destination
 
   - name: player-orders-db-deployer
     type: hdb
@@ -122,3 +123,8 @@ resources:
     parameters:
       service: html5-apps-repo
       service-plan: app-runtime
+  - name: player-orders-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite

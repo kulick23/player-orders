@@ -13,6 +13,15 @@ service PlayerOrderService {
         totalStockUnits    : Integer;
     }
 
+    type CRMPlayerProfile {
+        ID            : UUID;
+        displayName   : String(100);
+        email         : String(100);
+        vipTier       : String(20);
+        averageRating : Decimal(2,1);
+        statusCode    : String(20);
+    }
+
     @requires: ['Customer', 'SalesAdmin', 'WarehouseManager']
     function getInventorySummary() returns InventorySummary;
 
@@ -61,7 +70,10 @@ service PlayerOrderService {
         { grant: '*',    to: 'SalesAdmin' },
         { grant: 'READ', to: 'WarehouseManager' }
     ]
-    entity Customers as projection on db.Customer;
+    entity Customers as projection on db.Customer
+        actions {
+            function crmProfile() returns CRMPlayerProfile;
+        };
 
     @restrict: [
         { grant: 'READ',             to: 'Customer' },

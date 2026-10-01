@@ -18,6 +18,12 @@ export function findSalesOrder(tx: Transaction, ID: string) {
   ) as Promise<SalesOrder | undefined>;
 }
 
+export function findOrdersByCustomerID(tx: Transaction, customerID: string) {
+  return tx.run(
+    SELECT.from(SALES_ORDER).where({ customer_ID: customerID }),
+  ) as Promise<SalesOrder[]>;
+}
+
 export function findFirstOrderItem(tx: Transaction, orderID: string) {
   return tx.run(
     SELECT.one.from(SALES_ORDER_ITEM).columns("ID").where({ order_ID: orderID }),

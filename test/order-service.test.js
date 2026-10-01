@@ -6,4 +6,5 @@ describe("PlayerOrderService", () => {
   require("./suites/authorization");
   require("./suites/product-management");
   require("./suites/order-lifecycle");
+  require("./suites/integration-api");
 });
