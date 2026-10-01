@@ -1,11 +1,6 @@
 {
   "xsappname": "player-orders",
   "tenant-mode": "dedicated",
-  "oauth2-configuration": {
-  "redirect-uris": [
-    "https://90b3d5c7trial-dev-player-orders.cfapps.us10-001.hana.ondemand.com/login/callback"
-  ]
-},
   "scopes": [
     {
       "name": "$XSAPPNAME.Customer",
