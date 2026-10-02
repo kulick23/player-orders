@@ -7,7 +7,7 @@
         contentWidth="46rem"
         stretchOnPhone="true">
         <content>
-            <VBox class="sapUiContentPadding">
+            <VBox class="ordersDialogContent">
                 <Label text="{i18n>customer}" required="true" labelFor="createCustomerSelect" />
                 <Select
                     id="createCustomerSelect"
@@ -17,11 +17,17 @@
                     <core:Item key="{ID}" text="{displayName}" />
                 </Select>
 
-                <Label text="{i18n>discount}" labelFor="createDiscount" class="sapUiSmallMarginTop" />
+                <Label
+                    text="{i18n>discount}"
+                    labelFor="createDiscount"
+                    class="sapUiSmallMarginTop"
+                    visible="{= ${ui>/capabilities/roleCode} === 'SalesAdmin' }" />
                 <Input
                     id="createDiscount"
                     type="Number"
-                    value="{ui>/newOrder/discountAmount}" />
+                    width="100%"
+                    value="{ui>/newOrder/discountAmount}"
+                    visible="{= ${ui>/capabilities/roleCode} === 'SalesAdmin' }" />
 
                 <Label text="{i18n>note}" labelFor="createNote" class="sapUiSmallMarginTop" />
                 <TextArea

@@ -27,6 +27,22 @@ describe("product management", () => {
     expect(inactiveProduct.stockStatus).to.equal("INACTIVE");
   });
 
+  it("calculates stock status when clients select only the virtual status", async () => {
+    const response = await GET(
+      "/orders/GameProducts?$select=name,stockStatus",
+      options(WAREHOUSE),
+    );
+    const coins = response.data.value.find(
+      (product) => product.name === "1000 Coins",
+    );
+    const inactiveProduct = response.data.value.find(
+      (product) => product.name === "Founder Avatar Frame",
+    );
+
+    expect(coins.stockStatus).to.equal("NOT_TRACKED");
+    expect(inactiveProduct.stockStatus).to.equal("INACTIVE");
+  });
+
   it("returns inventory totals through an OData function", async () => {
     const response = await GET(
       "/orders/getInventorySummary()",

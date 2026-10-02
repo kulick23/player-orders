@@ -49,7 +49,7 @@
                         </IconTabFilter>
 
                         <IconTabFilter key="items" text="{i18n>orderItems}" icon="sap-icon://cart">
-                            <Table items="{items}" noDataText="{i18n>noItems}">
+                            <Table id="orderItemsTable" items="{items}" noDataText="{i18n>noItems}">
                                 <columns>
                                     <Column><Text text="{i18n>product}" /></Column>
                                     <Column hAlign="End"><Text text="{i18n>quantity}" /></Column>

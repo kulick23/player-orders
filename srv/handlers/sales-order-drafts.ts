@@ -18,6 +18,10 @@ export function createPrepareSalesOrderHandler(GameProducts: cds.entity) {
 
     if (req.user.is(Role.Customer) && !req.user.is(Role.SalesAdmin)) {
       req.data.customer_ID = await customerIDFor(req);
+      if (Number(req.data.discountAmount ?? 0) !== 0) {
+        return req.reject(403, "Customers cannot set order discounts");
+      }
+      req.data.discountAmount = 0;
     }
 
     const items = req.data.items ?? [];
@@ -62,6 +66,7 @@ export async function protectCustomerDraftFields(req: Request) {
     "totalAmount",
     "paymentMethod",
     "orderDate",
+    "discountAmount",
   ];
   const changedProtectedFields = protectedFields.filter((field) =>
     Object.prototype.hasOwnProperty.call(req.data, field),
@@ -83,6 +88,7 @@ export async function protectCustomerDraftFields(req: Request) {
 export async function prepareSalesOrderDraftSave(req: Request) {
   if (req.user.is(Role.Customer) && !req.user.is(Role.SalesAdmin)) {
     req.data.customer_ID = await customerIDFor(req);
+    req.data.discountAmount = 0;
   }
 
   const subtotal = calculateSubtotal(req.data.items ?? []);

@@ -84,6 +84,7 @@ describe("authentication and role access", () => {
     );
 
     expect(response.data).to.include({
+      roleCode: "Customer",
       canCreateOrder: true,
       canUpdateOrder: true,
       canDeleteOrder: true,
@@ -104,6 +105,7 @@ describe("authentication and role access", () => {
     );
 
     expect(response.data).to.include({
+      roleCode: "SalesAdmin",
       canCreateOrder: true,
       canUpdateOrder: true,
       canDeleteOrder: true,
@@ -124,6 +126,7 @@ describe("authentication and role access", () => {
     );
 
     expect(response.data).to.include({
+      roleCode: "WarehouseManager",
       canCreateOrder: false,
       canUpdateOrder: false,
       canDeleteOrder: false,
@@ -145,6 +148,19 @@ describe("authentication and role access", () => {
     );
 
     expect(response.status).to.equal(403);
+  });
+
+  it("forbids a customer from assigning an order discount", async () => {
+    const response = await POST(
+      "/orders/SalesOrders",
+      { discountAmount: 1 },
+      options(CUSTOMER, true),
+    );
+
+    expect(response.status).to.equal(403);
+    expect(response.data.error.message).to.equal(
+      "Customers cannot change system fields: discountAmount",
+    );
   });
 
   it("forbids a customer from marking an order as paid", async () => {

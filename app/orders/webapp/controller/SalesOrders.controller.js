@@ -149,15 +149,18 @@ sap.ui.define([
 
       await this.runBusy(async () => {
         const oListBinding = this.getModel().bindList("/SalesOrders");
-        const oDraftContext = oListBinding.create({
+        const oOrder = {
           customer_ID: sCustomerID,
-          discountAmount: Number(oNewOrder.discountAmount || 0),
           note: oNewOrder.note,
           items: oNewOrder.items.map((oItem) => ({
             product_ID: oItem.productID,
             quantity: Number(oItem.quantity)
           }))
-        });
+        };
+        if (this.getUIModel().getProperty("/capabilities/roleCode") === "SalesAdmin") {
+          oOrder.discountAmount = Number(oNewOrder.discountAmount || 0);
+        }
+        const oDraftContext = oListBinding.create(oOrder);
 
         await oDraftContext.created();
         const oActiveContext = await this.executeAction(

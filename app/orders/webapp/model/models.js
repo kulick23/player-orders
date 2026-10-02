@@ -5,6 +5,7 @@ sap.ui.define([
 
   function createCapabilities() {
     return {
+      roleCode: "User",
       canCreateOrder: false,
       canUpdateOrder: false,
       canDeleteOrder: false,
@@ -54,7 +55,12 @@ sap.ui.define([
       },
       sorting: { path: "orderDate", descending: true },
       newOrder: createNewOrder(),
-      editOrder: { customerID: "", discountAmount: 0, note: "" },
+      editOrder: {
+        customerID: "",
+        discountAmount: 0,
+        note: "",
+        items: []
+      },
       paymentProvider: "STRIPE",
       cancellationReason: "",
       selectedNavigation: "orders",

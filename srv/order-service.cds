@@ -29,6 +29,7 @@ service PlayerOrderService {
     @cds.persistence.skip
     entity Configuration {
         key ID              : String;
+            roleCode        : String(30);
             canCreateOrder  : Boolean;
             canUpdateOrder  : Boolean;
             canDeleteOrder  : Boolean;

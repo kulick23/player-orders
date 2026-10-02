@@ -8,7 +8,9 @@
         <OverflowToolbar class="ordersTopBar">
             <Title text="PLAYER ORDERS" level="H1" class="ordersBrand" />
             <ToolbarSpacer />
-            <Text text="{i18n>administrator}" class="ordersUserRole" />
+            <Text
+                text="{= ${ui>/capabilities/roleCode} === 'SalesAdmin' ? ${i18n>roleSalesAdmin} : ${ui>/capabilities/roleCode} === 'WarehouseManager' ? ${i18n>roleWarehouseManager} : ${ui>/capabilities/roleCode} === 'Customer' ? ${i18n>roleCustomer} : ${i18n>roleUser} }"
+                class="ordersUserRole" />
             <Avatar initials="PO" displaySize="XS" backgroundColor="Accent6" />
         </OverflowToolbar>
 

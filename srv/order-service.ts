@@ -8,6 +8,7 @@ import {
 import {
   enrichProductStockStatus,
   getInventorySummary,
+  includeProductStockStatusDependencies,
 } from "./handlers/product-queries.js";
 import { createCalculateItemAmountsHandler } from "./handlers/sales-order-items.js";
 import {
@@ -42,6 +43,7 @@ export default class PlayerOrderService extends cds.ApplicationService {
     this.on("crmProfile", Customers, getCustomerCRMProfile);
 
     this.before(["CREATE", "UPDATE"], GameProducts, validateGameProduct);
+    this.before("READ", GameProducts, includeProductStockStatusDependencies);
     this.after("READ", GameProducts, enrichProductStockStatus);
     this.on("replenishStock", GameProducts, replenishStock);
     this.on("setImage", GameProducts, setProductImage);
@@ -51,7 +53,11 @@ export default class PlayerOrderService extends cds.ApplicationService {
       SalesOrders,
       createPrepareSalesOrderHandler(GameProducts),
     );
-    this.before("PATCH", SalesOrders.drafts!, protectCustomerDraftFields);
+    this.before(
+      ["CREATE", "PATCH"],
+      SalesOrders.drafts!,
+      protectCustomerDraftFields,
+    );
     this.before("SAVE", SalesOrders.drafts!, prepareSalesOrderDraftSave);
     this.on("submitOrder", SalesOrders, submitOrder);
     this.on("markAsPaid", SalesOrders, markOrderAsPaid);
@@ -59,7 +65,11 @@ export default class PlayerOrderService extends cds.ApplicationService {
     this.on("cancelOrder", SalesOrders, cancelOrder);
 
     this.before("CREATE", SalesOrderItems, calculateItemAmounts);
-    this.before("PATCH", SalesOrderItems.drafts!, calculateItemAmounts);
+    this.before(
+      ["CREATE", "PATCH"],
+      SalesOrderItems.drafts!,
+      calculateItemAmounts,
+    );
 
     return super.init();
   }

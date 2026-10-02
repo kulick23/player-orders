@@ -8,6 +8,28 @@ import { listGameProductStock } from "../repositories/game-products.js";
 
 type ProductReadResult = GameProduct & { stockStatus?: string };
 
+export function includeProductStockStatusDependencies(req: Request) {
+  const columns = req.query?.SELECT?.columns;
+  if (!Array.isArray(columns)) {
+    return;
+  }
+
+  const selected = new Set(
+    columns
+      .map((column) => column?.ref?.[0])
+      .filter((name): name is string => typeof name === "string"),
+  );
+  if (!selected.has("stockStatus")) {
+    return;
+  }
+
+  for (const name of ["active", "stockRelevant", "stockQuantity"]) {
+    if (!selected.has(name)) {
+      columns.push({ ref: [name] });
+    }
+  }
+}
+
 function stockStatusFor(product: GameProduct) {
   if (!product.active) {
     return ProductStockStatus.Inactive;

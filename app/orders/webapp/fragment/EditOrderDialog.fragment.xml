@@ -1,20 +1,31 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
-    <Dialog title="{i18n>editOrder}" contentWidth="36rem" stretchOnPhone="true">
+    <Dialog title="{i18n>editOrder}" contentWidth="46rem" stretchOnPhone="true">
         <content>
-            <VBox class="sapUiContentPadding">
-                <Label text="{i18n>customer}" labelFor="editCustomer" required="true" />
+            <VBox class="ordersDialogContent">
+                <Label
+                    text="{i18n>customer}"
+                    labelFor="editCustomer"
+                    required="true"
+                    visible="{= ${ui>/capabilities/roleCode} === 'SalesAdmin' }" />
                 <Select
                     id="editCustomer"
                     selectedKey="{ui>/editOrder/customerID}"
                     items="{/Customers}"
-                    width="100%">
+                    width="100%"
+                    visible="{= ${ui>/capabilities/roleCode} === 'SalesAdmin' }">
                     <core:Item key="{ID}" text="{displayName}" />
                 </Select>
-                <Label text="{i18n>discount}" labelFor="editDiscount" class="sapUiSmallMarginTop" />
+                <Label
+                    text="{i18n>discount}"
+                    labelFor="editDiscount"
+                    class="sapUiSmallMarginTop"
+                    visible="{= ${ui>/capabilities/roleCode} === 'SalesAdmin' }" />
                 <Input
                     id="editDiscount"
                     type="Number"
-                    value="{ui>/editOrder/discountAmount}" />
+                    width="100%"
+                    value="{ui>/editOrder/discountAmount}"
+                    visible="{= ${ui>/capabilities/roleCode} === 'SalesAdmin' }" />
                 <Label text="{i18n>note}" labelFor="editNote" class="sapUiSmallMarginTop" />
                 <TextArea
                     id="editNote"
@@ -22,6 +33,44 @@
                     rows="4"
                     maxLength="300"
                     width="100%" />
+
+                <Toolbar class="sapUiSmallMarginTop">
+                    <Title text="{i18n>orderItems}" level="H4" />
+                    <ToolbarSpacer />
+                    <Button
+                        icon="sap-icon://add"
+                        text="{i18n>addItem}"
+                        press=".onAddEditOrderItem" />
+                </Toolbar>
+
+                <Table items="{ui>/editOrder/items}">
+                    <columns>
+                        <Column><Text text="{i18n>product}" /></Column>
+                        <Column width="9rem"><Text text="{i18n>quantity}" /></Column>
+                        <Column width="3rem" />
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Select
+                                    selectedKey="{ui>productID}"
+                                    items="{path: '/GameProducts', templateShareable: false}"
+                                    width="100%">
+                                    <core:Item key="{ID}" text="{name}" />
+                                </Select>
+                                <StepInput
+                                    value="{ui>quantity}"
+                                    min="1"
+                                    max="999" />
+                                <Button
+                                    icon="sap-icon://delete"
+                                    type="Transparent"
+                                    tooltip="{i18n>removeItem}"
+                                    press=".onRemoveEditOrderItem" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
             </VBox>
         </content>
         <beginButton>

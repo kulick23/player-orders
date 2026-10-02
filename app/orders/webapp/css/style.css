@@ -181,6 +181,12 @@ body > div,
   gap: 0.5rem;
 }
 
+.ordersDialogContent.sapMVBox {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  box-sizing: border-box;
+}
+
 .ordersSummaryCard {
   padding: 1.5rem;
   border: 1px solid #dde1e6;
