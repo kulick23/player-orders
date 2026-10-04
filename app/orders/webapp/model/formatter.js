@@ -19,6 +19,11 @@ sap.ui.define([], function () {
   });
 
   const CANCELLABLE_STATUSES = Object.freeze(["NEW", "SUBMITTED"]);
+  const REPORTABLE_STATUSES = Object.freeze([
+    "SUBMITTED",
+    "PAID",
+    "FULFILLED"
+  ]);
 
   return {
     statusState: function (sStatus) {
@@ -43,6 +48,10 @@ sap.ui.define([], function () {
 
     isCancellable: function (sStatus) {
       return CANCELLABLE_STATUSES.includes(sStatus);
+    },
+
+    isReportable: function (sStatus) {
+      return REPORTABLE_STATUSES.includes(sStatus);
     },
 
     paymentMethod: function (sPaymentMethod) {

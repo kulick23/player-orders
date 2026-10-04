@@ -22,6 +22,11 @@ service PlayerOrderService {
         statusCode    : String(20);
     }
 
+    type OrderIssueReceipt {
+        ID         : UUID;
+        statusCode : String(20);
+    }
+
     @requires: ['Customer', 'SalesAdmin', 'WarehouseManager']
     function getInventorySummary() returns InventorySummary;
 
@@ -37,6 +42,7 @@ service PlayerOrderService {
             canMarkAsPaid   : Boolean;
             canFulfillOrder : Boolean;
             canCancelOrder  : Boolean;
+            canReportIssue  : Boolean;
             canCreateProduct : Boolean;
             canReplenishStock : Boolean;
             canManageProductImage : Boolean;
@@ -46,9 +52,9 @@ service PlayerOrderService {
     @restrict: [
         { grant: 'CREATE',                         to: ['Customer', 'SalesAdmin'] },
         { grant: ['READ', 'UPDATE', 'DELETE'],     to: 'Customer', where: 'customer.playerId = $user.playerId' },
-        { grant: ['submitOrder', 'cancelOrder'],   to: 'Customer', where: 'customer.playerId = $user.playerId' },
+        { grant: ['submitOrder', 'cancelOrder', 'reportIssue'], to: 'Customer', where: 'customer.playerId = $user.playerId' },
         { grant: ['READ', 'UPDATE', 'DELETE'],     to: 'SalesAdmin' },
-        { grant: ['submitOrder', 'markAsPaid', 'cancelOrder'], to: 'SalesAdmin' },
+        { grant: ['submitOrder', 'markAsPaid', 'cancelOrder', 'reportIssue'], to: 'SalesAdmin' },
         { grant: ['READ', 'fulfillOrder'],         to: 'WarehouseManager' }
     ]
     entity SalesOrders     as projection on db.SalesOrder
@@ -57,7 +63,19 @@ service PlayerOrderService {
             action markAsPaid(paymentProvider: String(50)) returns SalesOrders;
             action fulfillOrder()                          returns SalesOrders;
             action cancelOrder(reason: String(300))        returns SalesOrders;
+            action reportIssue(
+                categoryCode: String(30),
+                rating: Integer,
+                description: String(1000)
+            ) returns OrderIssueReceipt;
         };
+
+    @readonly
+    @cds.persistence.skip
+    entity OrderIssueCategories {
+        key code : String(30);
+            label : String(100);
+    }
 
     @restrict: [
         { grant: '*',    to: 'Customer', where: 'order.customer.playerId = $user.playerId' },

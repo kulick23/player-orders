@@ -21,6 +21,7 @@
                     <Button text="{i18n>markAsPaid}" visible="{ui>/capabilities/canMarkAsPaid}" enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isSubmitted'}" press=".onOpenPayment" />
                     <Button text="{i18n>fulfillOrder}" visible="{ui>/capabilities/canFulfillOrder}" enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isPaid'}" press=".onFulfillOrder" />
                     <Button text="{i18n>cancelOrder}" visible="{ui>/capabilities/canCancelOrder}" enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isCancellable'}" press=".onOpenCancel" />
+                    <Button icon="sap-icon://message-error" text="{i18n>reportOrderIssue}" visible="{ui>/capabilities/canReportIssue}" enabled="{path: 'status_code', targetType: 'any', formatter: '.formatter.isReportable'}" press=".onOpenReportIssue" />
                     <Button icon="sap-icon://refresh" type="Transparent" tooltip="{i18n>refresh}" press=".onRefresh" />
                 </FlexBox>
 

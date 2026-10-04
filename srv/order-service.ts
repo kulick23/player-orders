@@ -23,6 +23,10 @@ import {
 import { fulfillOrder } from "./handlers/sales-order-fulfillment.js";
 import { markOrderAsPaid } from "./handlers/sales-order-payment.js";
 import { getCustomerCRMProfile } from "./services/player-integration.js";
+import {
+  readOrderIssueCategories,
+  reportOrderIssue,
+} from "./handlers/order-issues.js";
 
 export default class PlayerOrderService extends cds.ApplicationService {
   async init() {
@@ -32,6 +36,7 @@ export default class PlayerOrderService extends cds.ApplicationService {
       SalesOrders,
       SalesOrderItems,
       GameProducts,
+      OrderIssueCategories,
     } = this.entities;
     const calculateItemAmounts = createCalculateItemAmountsHandler(
       GameProducts,
@@ -41,6 +46,7 @@ export default class PlayerOrderService extends cds.ApplicationService {
     this.on("READ", Configuration, readConfiguration);
     this.on("getInventorySummary", getInventorySummary);
     this.on("crmProfile", Customers, getCustomerCRMProfile);
+    this.on("READ", OrderIssueCategories, readOrderIssueCategories);
 
     this.before(["CREATE", "UPDATE"], GameProducts, validateGameProduct);
     this.before("READ", GameProducts, includeProductStockStatusDependencies);
@@ -63,6 +69,7 @@ export default class PlayerOrderService extends cds.ApplicationService {
     this.on("markAsPaid", SalesOrders, markOrderAsPaid);
     this.on("fulfillOrder", SalesOrders, fulfillOrder);
     this.on("cancelOrder", SalesOrders, cancelOrder);
+    this.on("reportIssue", SalesOrders, reportOrderIssue);
 
     this.before("CREATE", SalesOrderItems, calculateItemAmounts);
     this.before(

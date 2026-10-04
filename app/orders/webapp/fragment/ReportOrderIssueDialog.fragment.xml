@@ -1,0 +1,38 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <Dialog title="{i18n>reportOrderIssue}" contentWidth="36rem" stretchOnPhone="true">
+        <content>
+            <VBox class="sapUiContentPadding">
+                <Label text="{i18n>problemType}" labelFor="orderIssueCategory" required="true" />
+                <Select
+                    id="orderIssueCategory"
+                    width="100%"
+                    selectedKey="{ui>/orderIssue/categoryCode}"
+                    items="{/OrderIssueCategories}">
+                    <core:Item key="{code}" text="{label}" />
+                </Select>
+
+                <Label text="{i18n>problemRating}" labelFor="orderIssueRating" required="true" class="sapUiSmallMarginTop" />
+                <RatingIndicator
+                    id="orderIssueRating"
+                    value="{ui>/orderIssue/rating}"
+                    maxValue="5"
+                    iconSize="1.75rem" />
+
+                <Label text="{i18n>problemDescription}" labelFor="orderIssueDescription" required="true" class="sapUiSmallMarginTop" />
+                <TextArea
+                    id="orderIssueDescription"
+                    value="{ui>/orderIssue/description}"
+                    rows="5"
+                    maxLength="1000"
+                    width="100%"
+                    placeholder="{i18n>problemDescriptionPlaceholder}" />
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="{i18n>send}" type="Emphasized" press=".onConfirmReportIssue" />
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>close}" press=".onCloseReportIssue" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

@@ -121,6 +121,45 @@ sap.ui.define([
       this.closeDialog("cancelDialog");
     },
 
+    onOpenReportIssue: async function () {
+      this.getUIModel().setProperty("/orderIssue", {
+        categoryCode: "",
+        rating: 0,
+        description: ""
+      });
+      const oDialog = await this.getOrLoadDialog(
+        "reportIssueDialog",
+        "playerorders.orders.fragment.ReportOrderIssueDialog"
+      );
+      oDialog.open();
+    },
+
+    onConfirmReportIssue: async function () {
+      const oIssue = this.getUIModel().getProperty("/orderIssue");
+      if (!oIssue.categoryCode || !oIssue.description.trim() ||
+          Number(oIssue.rating) < 1) {
+        this.showError(new Error(this.getText("completeOrderIssueFields")));
+        return;
+      }
+
+      const bSucceeded = await this.runAction(
+        "reportIssue",
+        {
+          categoryCode: oIssue.categoryCode,
+          rating: Number(oIssue.rating),
+          description: oIssue.description.trim()
+        },
+        "orderIssueReported"
+      );
+      if (bSucceeded) {
+        this.closeDialog("reportIssueDialog");
+      }
+    },
+
+    onCloseReportIssue: function () {
+      this.closeDialog("reportIssueDialog");
+    },
+
     onOpenEdit: async function () {
       await this.runBusy(async () => {
         const oContext = this.getView().getBindingContext();

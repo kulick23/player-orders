@@ -23,6 +23,7 @@ export function readConfiguration(req: Request) {
     canMarkAsPaid: isSalesAdmin,
     canFulfillOrder: isWarehouseManager,
     canCancelOrder: isCustomer || isSalesAdmin,
+    canReportIssue: isCustomer || isSalesAdmin,
     canCreateProduct: isSalesAdmin || isWarehouseManager,
     canReplenishStock: isSalesAdmin || isWarehouseManager,
     canManageProductImage: isSalesAdmin || isWarehouseManager,

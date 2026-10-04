@@ -13,6 +13,7 @@ sap.ui.define([
       canMarkAsPaid: false,
       canFulfillOrder: false,
       canCancelOrder: false,
+      canReportIssue: false,
       canCreateProduct: false,
       canReplenishStock: false,
       canManageProductImage: false
@@ -63,6 +64,11 @@ sap.ui.define([
       },
       paymentProvider: "STRIPE",
       cancellationReason: "",
+      orderIssue: {
+        categoryCode: "",
+        rating: 0,
+        description: ""
+      },
       selectedNavigation: "orders",
       productSearch: "",
       inventorySummary: {
