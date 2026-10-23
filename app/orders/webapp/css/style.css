@@ -21,6 +21,11 @@ body > div,
   box-shadow: none;
 }
 
+.ordersMobileLanguageSwitch,
+.ordersBottomNavigation {
+  display: none;
+}
+
 .ordersBrand.sapMTitle {
   display: inline-flex;
   align-items: center;
@@ -204,6 +209,16 @@ body > div,
 }
 
 @media (max-width: 900px) {
+  .ordersTopBar.sapMTB {
+    min-height: 4rem;
+    padding: 0 0.75rem;
+  }
+
+  .ordersMobileLanguageSwitch {
+    display: inline-flex;
+    margin-right: 0.5rem;
+  }
+
   .ordersPageContent {
     padding: 1.5rem 1rem 2rem;
   }
@@ -213,20 +228,53 @@ body > div,
   }
 
   .ordersSidebar {
-    width: 3rem;
-    min-width: 3rem;
-  }
-
-  .ordersSidebarFooter {
-    justify-content: center;
-    padding: 0.75rem 0.25rem;
-  }
-
-  .ordersSidebarFooter .sapMText {
     display: none;
   }
 
   .ordersUserRole {
     display: none;
+  }
+
+  .ordersBottomNavigation {
+    display: flex;
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: calc(4rem + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    border-top: 1px solid #d9e2ec;
+    background: #ffffff;
+    box-shadow: 0 -0.2rem 0.8rem rgba(34, 53, 72, 0.12);
+    z-index: 5;
+  }
+
+  .ordersBottomNavigationItem.sapMBtn {
+    flex: 1 1 50%;
+    width: 50% !important;
+    height: 4rem;
+    padding: 0;
+  }
+
+  .ordersBottomNavigationItem .sapMBtnInner {
+    height: 4rem;
+    min-width: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .ordersBottomNavigationItem .sapMBtnContent,
+  .ordersBottomNavigationItem .sapMBtnIcon {
+    color: #40566b;
+  }
+
+  .ordersBottomNavigationItem .sapMBtnEmphasized {
+    border-top: 3px solid #0a6ed1 !important;
+    background: #eef6ff !important;
+    text-shadow: none;
+  }
+
+  .ordersBottomNavigationItem .sapMBtnEmphasized .sapMBtnContent,
+  .ordersBottomNavigationItem .sapMBtnEmphasized .sapMBtnIcon {
+    color: #0a6ed1;
   }
 }

@@ -8,6 +8,13 @@
         <OverflowToolbar class="ordersTopBar">
             <Title text="PLAYER ORDERS" level="H1" class="ordersBrand" />
             <ToolbarSpacer />
+            <Switch
+                class="ordersMobileLanguageSwitch"
+                state="{ui>/isEnglish}"
+                customTextOn="EN"
+                customTextOff="RU"
+                tooltip="{i18n>changeLanguage}"
+                change=".onLanguageChange" />
             <Text
                 text="{= ${ui>/capabilities/roleCode} === 'SalesAdmin' ? ${i18n>roleSalesAdmin} : ${ui>/capabilities/roleCode} === 'WarehouseManager' ? ${i18n>roleWarehouseManager} : ${ui>/capabilities/roleCode} === 'Customer' ? ${i18n>roleCustomer} : ${i18n>roleUser} }"
                 class="ordersUserRole" />
@@ -15,6 +22,9 @@
         </OverflowToolbar>
 
         <HBox class="ordersWorkspace" fitContainer="true">
+            <layoutData>
+                <FlexItemData growFactor="1" baseSize="0" />
+            </layoutData>
             <VBox fitContainer="true" class="ordersSidebar">
                 <tnt:SideNavigation id="sideNavigation" expanded="true" class="ordersSideNavigation" itemSelect=".onItemSelect">
                     <tnt:layoutData>
@@ -41,6 +51,31 @@
                     <FlexItemData growFactor="1" baseSize="0" />
                 </layoutData>
             </App>
+        </HBox>
+
+        <HBox class="ordersBottomNavigation" alignItems="Stretch">
+            <Button
+                class="ordersBottomNavigationItem"
+                width="100%"
+                icon="sap-icon://sales-order"
+                text="{i18n>orders}"
+                type="{= ${ui>/selectedNavigation} === 'orders' ? 'Emphasized' : 'Transparent' }"
+                press=".onNavigateOrders">
+                <layoutData>
+                    <FlexItemData growFactor="1" baseSize="50%" />
+                </layoutData>
+            </Button>
+            <Button
+                class="ordersBottomNavigationItem"
+                width="100%"
+                icon="sap-icon://product"
+                text="{i18n>products}"
+                type="{= ${ui>/selectedNavigation} === 'products' ? 'Emphasized' : 'Transparent' }"
+                press=".onNavigateProducts">
+                <layoutData>
+                    <FlexItemData growFactor="1" baseSize="50%" />
+                </layoutData>
+            </Button>
         </HBox>
     </VBox>
 </mvc:View>

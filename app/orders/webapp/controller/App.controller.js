@@ -28,6 +28,18 @@ sap.ui.define([
 
     onItemSelect: function (oEvent) {
       const sKey = oEvent.getParameter("item").getKey();
+      this._navigateToSection(sKey);
+    },
+
+    onNavigateOrders: function () {
+      this._navigateToSection("orders");
+    },
+
+    onNavigateProducts: function () {
+      this._navigateToSection("products");
+    },
+
+    _navigateToSection: function (sKey) {
       if (["orders", "products"].includes(sKey)) {
         this.getOwnerComponent().getRouter().navTo(sKey);
       }
